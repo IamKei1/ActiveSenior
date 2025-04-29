@@ -1,3 +1,3 @@
 # ActiveSenior
 
-Capstone Desing
+Capstone Design
