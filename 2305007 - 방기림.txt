@@ -1,0 +1,49 @@
+3-6 파일복사
+1./etc/hosts/ 파일을 ch03 디렉터리에 파일명을 htest로 지정하여 복사한다.  - cp/etc/hosts ch03/htest
+2.temp3 디렉터리를 만든다. mkdir temp3
+
+3.test1.htest 파일을 한 번에 temp3 디렉터리로 복사한다.
+cp test1.htest temp3/
+
+4./etc/profile 파일 ch03 디렉터리에 파일명을 htest로 지정하여 복사한다.
+cp /etc/profile ch03/htest
+
+5 -I 옵션을 지정하고 htest 파일을 temp3 디렉터리로 복사한다 어떤 메시지가 출력괴는가? 메세지에 y로 응답한다.
+
+cp -i ch03/htest temp3/
+
+6.temp3 디렉터리에서 test 파일의 내용을 확인한다. 파일의 내용은 /etc/hosts 파일과 /etc/progile 파일 중 어떤 파일의 내용인가? 그이유는 무엇인가?
+cat temp3/htest
+
+7temp3 디렉터리를 temp 디렉터리로 복사한다.
+cp -r temp3 temp
+
+
+3-7 파일 이동
+1 data1 파일의 이름을 data1.org.로 변경한다.
+mv data1 data1.org
+
+2. data1.org 파일을 temp2 디렉토리로 이동한다. mv data1.org temp2/
+3. temp 디렉터리에 있는 temp3 디렉터리를 현재 디렉터리로 이동한다. mv temp/temp3 
+4. -I 옵션을 지정하고 temp3/test1 파일을 temp 디렉터리로 이동한다. 어떤 메시지가 출력되는가? 메세지에 n으로응답한다. mv -i temp3/test1 temp/
+5. Temp3 디렉터리 이름을 temp1으로 변경한다 mv temp3 temp1
+6. 
+
+
+3-8 파일삭제
+1.temp 디렉터리의 test2파일을 삭제한다. rm temp/test2
+
+2. rmdir 명령을 사용하여 one 디렉터리를 삭제한다. 어떤메시지가 출력되는가? rmdir one
+3. one 디렉터리에 있는 me 디렉터리를 rm 명령에 적절한 옵션을 지정하여 삭제한다. rm -r one/me
+4. rmdir  명령으로 one 디렉터리를 삭제한다. 삭제되는가? rmdir one
+5. -I 옵션을 지정하여 temp1 디렉터리를 삭제한다 rm -ri temp1
+
+3-9 파일 복사 이동 삭제 
+
+1. temp/test1 파일을 test.txt 파일로 복사한다. cp temp/test1 test.txt
+2. backup 디렉터리를 생성한다. mkdir backup
+3. test.txt 파일을 backup 디렉터리로 이동한다. mv test.txt backup/
+4. backup 디렉터리의 이름을 work로 변경한다. mv backup work
+5. rmdir 명령을 사용하여 work 디렉터리를 삭제한다. 어떤현상이 일어나는가? 그이유는 무엇인가? rmdir work
+6. rm 명령을 사용하여 work 디렉터리를 삭제한다. 정말호 삭제할 것인지 묻는 메시지를 표시하려면 어떻게 해야하는가? rm -r work
+  Y
