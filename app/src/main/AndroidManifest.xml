@@ -14,13 +14,16 @@
 
         <!-- 앱 실행 시 첫 화면 -->
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".activities.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+        <activity android:name=".activities.MainActivity" />
 
         <!-- 나머지 화면들 등록 -->
         <activity android:name=".activities.RegisterActivity" />

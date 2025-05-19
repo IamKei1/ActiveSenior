@@ -1,46 +1,63 @@
 package com.example.activesenior.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.Toast;
-
+import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.activesenior.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private Button viewMentorListButton;
-    private Button logoutButton;
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
+
+    private TextView welcomeTextView;
+    private TextView temperatureTextView;
+    private TextView statusTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);  // 예쁜 레이아웃 연결
+        setContentView(R.layout.activity_home);
 
-        // Firebase Auth 초기화
+        // Firebase 인스턴스
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
-        // 버튼 연결
-        viewMentorListButton = findViewById(R.id.viewMentorListButton);
-        logoutButton = findViewById(R.id.logoutButton);
+        // 레이아웃 연결
+        welcomeTextView = findViewById(R.id.welcomeTextView);
+        temperatureTextView = findViewById(R.id.temperatureTextView);
+        statusTextView = findViewById(R.id.statusTextView);
 
-        // 멘토 리스트 보기 버튼 클릭 이벤트
-        viewMentorListButton.setOnClickListener(v -> {
-            // 나중에 MentorListActivity가 생기면 연결
-            Toast.makeText(this, "멘토 리스트로 이동할 예정이에요!", Toast.LENGTH_SHORT).show();
-            // 예시: startActivity(new Intent(HomeActivity.this, MentorListActivity.class));
-        });
+        // 사용자 정보 가져오기
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            String uid = currentUser.getUid();
 
-        // 로그아웃 버튼 클릭 이벤트
-        logoutButton.setOnClickListener(v -> {
-            mAuth.signOut(); // Firebase에서 로그아웃
-            Toast.makeText(this, "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(HomeActivity.this, MainActivity.class)); // 로그인 화면으로 이동
-            finish(); // 현재 화면 종료
-        });
+            db.collection("users").document(uid).get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            String name = documentSnapshot.getString("name");
+                            String role = documentSnapshot.getString("role");
+                            String temp = "36.5℃"; // 추후 기능화 가능
+                            String status = "대기중"; // 임시값
+
+                            welcomeTextView.setText(name + "님 환영합니다");
+                            temperatureTextView.setText("나의 온도 : " + temp);
+                            statusTextView.setText("현재 멘토/멘티 활동\n" + status);
+                        } else {
+                            welcomeTextView.setText("사용자 정보를 찾을 수 없습니다.");
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        welcomeTextView.setText("정보 로딩 실패: " + e.getMessage());
+                    });
+        } else {
+            welcomeTextView.setText("로그인 사용자 없음");
+        }
     }
 }
