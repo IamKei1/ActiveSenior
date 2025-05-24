@@ -15,7 +15,7 @@
         <TextView
             android:id="@+id/titleTextView"
             android:text="회원정보"
-            android:textSize="20sp"
+            android:textSize="36sp"
             android:textStyle="bold"
             android:layout_marginBottom="10dp"
             android:layout_width="wrap_content"
@@ -26,7 +26,7 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="20dp"
+            android:padding="36dp"
             android:background="#5A9EFF"
             android:layout_marginBottom="20dp"
             android:gravity="center"
@@ -40,7 +40,7 @@
             <TextView
                 android:id="@+id/temperatureTextView"
                 android:text="나의 온도 : 36.5℃"
-                android:textSize="16sp"
+                android:textSize="28sp"
                 android:textColor="#FFFFFF"
                 android:layout_marginBottom="8dp"
                 android:gravity="center"
@@ -50,7 +50,7 @@
             <TextView
                 android:id="@+id/welcomeTextView"
                 android:text="홍길동님 환영합니다"
-                android:textSize="16sp"
+                android:textSize="28sp"
                 android:textColor="#FFFFFF"
                 android:layout_marginBottom="8dp"
                 android:gravity="center"
@@ -59,23 +59,44 @@
 
             <TextView
                 android:id="@+id/statusTextView"
-                android:text="현재 멘토/멘티 활동\n대기중 / 진행중"
-                android:textSize="14sp"
+                android:text="현재 멘토/멘티 활동\n [대기중 / 진행중]"
+                android:textSize="24sp"
                 android:textColor="#FFFFFF"
                 android:gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
-        <!-- 버튼 4개 -->
+        <!-- 버튼 5개 -->
         <Button
-            android:id="@+id/findButton"
-            android:text="멘토/멘티 찾기"
+            android:id="@+id/findMentorButton"
+            android:text="멘토 찾기"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:backgroundTint="#444444"
-            android:textColor="#FFFFFF" />
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"/>
+
+        <Button
+            android:id="@+id/findMenteeButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:backgroundTint="#444444"
+            android:text="멘티 찾기"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"/>
+
+        <Button
+            android:id="@+id/aiMentorButton"
+            android:text="AI멘토에게 물어보기"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:backgroundTint="#444444"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"/>
 
         <Button
             android:id="@+id/manualButton"
@@ -84,24 +105,18 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:backgroundTint="#444444"
-            android:textColor="#FFFFFF" />
-
-        <Button
-            android:id="@+id/registerButton"
-            android:text="멘토/멘티 등록"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:backgroundTint="#444444"
-            android:textColor="#FFFFFF" />
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"/>
 
         <Button
             android:id="@+id/customerServiceButton"
             android:text="고객서비스"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
             android:backgroundTint="#444444"
-            android:textColor="#FFFFFF" />
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"/>
 
     </LinearLayout>
 </ScrollView>

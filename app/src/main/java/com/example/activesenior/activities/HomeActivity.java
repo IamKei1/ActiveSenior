@@ -1,6 +1,9 @@
 package com.example.activesenior.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,16 +11,15 @@ import com.example.activesenior.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.DocumentSnapshot;
 
 public class HomeActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
-    private TextView welcomeTextView;
-    private TextView temperatureTextView;
-    private TextView statusTextView;
+    private TextView welcomeTextView, temperatureTextView, statusTextView;
+    private Button findMentorButton, findMenteeButton;
+    private Button aiMentorButton, manualButton, customerServiceButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,36 +30,54 @@ public class HomeActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // 레이아웃 연결
+        // UI 연결
         welcomeTextView = findViewById(R.id.welcomeTextView);
         temperatureTextView = findViewById(R.id.temperatureTextView);
         statusTextView = findViewById(R.id.statusTextView);
 
-        // 사용자 정보 가져오기
+        findMentorButton = findViewById(R.id.findMentorButton);
+        findMenteeButton = findViewById(R.id.findMenteeButton);
+        aiMentorButton = findViewById(R.id.aiMentorButton);
+        manualButton = findViewById(R.id.manualButton);
+        customerServiceButton = findViewById(R.id.customerServiceButton);
+
+        // 버튼 초기 숨김
+        findMentorButton.setVisibility(View.GONE);
+        findMenteeButton.setVisibility(View.GONE);
+
+        aiMentorButton.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, AiMentorActivity.class);
+            startActivity(intent);
+        });
+
+        // 사용자 정보 로드
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             String uid = currentUser.getUid();
 
             db.collection("users").document(uid).get()
-                    .addOnSuccessListener(documentSnapshot -> {
-                        if (documentSnapshot.exists()) {
-                            String name = documentSnapshot.getString("name");
-                            String role = documentSnapshot.getString("role");
-                            String temp = "36.5℃"; // 추후 기능화 가능
-                            String status = "대기중"; // 임시값
+                    .addOnSuccessListener(doc -> {
+                        if (doc.exists()) {
+                            String name = doc.getString("name");
+                            String role = doc.getString("role");
+                            String temp = "36.5℃"; // 추후 로직 반영 가능
+                            String status = "대기중"; // 추후 로직 반영 가능
 
                             welcomeTextView.setText(name + "님 환영합니다");
                             temperatureTextView.setText("나의 온도 : " + temp);
-                            statusTextView.setText("현재 멘토/멘티 활동\n" + status);
-                        } else {
-                            welcomeTextView.setText("사용자 정보를 찾을 수 없습니다.");
+                            statusTextView.setText(role + " 활동 " + status);
+
+                            // 역할에 따라 버튼 표시
+                            if ("멘토".equals(role)) {
+                                findMentorButton.setVisibility(View.VISIBLE);
+                            } else if ("멘티".equals(role)) {
+                                findMenteeButton.setVisibility(View.VISIBLE);
+                            }
                         }
                     })
                     .addOnFailureListener(e -> {
                         welcomeTextView.setText("정보 로딩 실패: " + e.getMessage());
                     });
-        } else {
-            welcomeTextView.setText("로그인 사용자 없음");
         }
     }
 }
