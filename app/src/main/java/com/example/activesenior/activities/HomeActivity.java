@@ -45,6 +45,16 @@ public class HomeActivity extends AppCompatActivity {
         findMentorButton.setVisibility(View.GONE);
         findMenteeButton.setVisibility(View.GONE);
 
+        // 멘토찾기
+        findMentorButton.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, FindMentorActivity.class);
+            startActivity(intent);
+        });
+
+
+
+
+        // AI멘토에게 물어보기
         aiMentorButton.setOnClickListener(v -> {
             Intent intent = new Intent(HomeActivity.this, AiMentorActivity.class);
             startActivity(intent);
@@ -69,9 +79,9 @@ public class HomeActivity extends AppCompatActivity {
 
                             // 역할에 따라 버튼 표시
                             if ("멘토".equals(role)) {
-                                findMentorButton.setVisibility(View.VISIBLE);
-                            } else if ("멘티".equals(role)) {
                                 findMenteeButton.setVisibility(View.VISIBLE);
+                            } else if ("멘티".equals(role)) {
+                                findMentorButton.setVisibility(View.VISIBLE);
                             }
                         }
                     })

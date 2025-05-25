@@ -1,24 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:padding="16dp"
-    android:orientation="vertical"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#F0F0F0"
+    android:layout_margin="8dp"
+    android:elevation="4dp">
 
-    <TextView android:id="@+id/nameTextView"
-        android:text="이름"
-        android:textSize="18sp"
+    <!-- 멘토 이름 -->
+    <TextView
+        android:id="@+id/mentorNameTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="홍길동"
+        android:textSize="20sp"
         android:textStyle="bold"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:maxLines="1"
+        android:ellipsize="end"/>
 
-    <TextView android:id="@+id/fieldTextView"
-        android:text="분야"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    <!-- 멘토 역할 -->
+    <TextView
+        android:id="@+id/mentorRoleTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="역할: mentor"
+        android:textSize="16sp"
+        android:layout_marginTop="4dp" />
 
-    <TextView android:id="@+id/emailTextView"
-        android:text="이메일"
+    <TextView
+        android:id="@+id/mentorDistanceTextView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="거리: 500m"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp"/>
+
+
+    <!-- 요청 버튼 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:layout_marginTop="8dp">
+
+        <Button
+            android:id="@+id/requestButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="요청하기"
+            android:backgroundTint="#5A9EFF"
+            android:textColor="#FFFFFF"/>
+    </LinearLayout>
 </LinearLayout>
