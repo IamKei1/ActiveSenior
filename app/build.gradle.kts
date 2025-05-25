@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.google.gms.google.services)
 }
 
+val mapsApiKey: String = project.findProperty("MAPS_API_KEY") as String? ?: ""
+
 android {
     namespace = "com.example.activesenior"
     compileSdk = 35
@@ -15,6 +17,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        resValue(name = "google_maps_key", type = "string", value = mapsApiKey)
     }
 
     buildTypes {
@@ -31,6 +35,8 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 }
+
+
 
 dependencies {
     implementation(libs.appcompat)
