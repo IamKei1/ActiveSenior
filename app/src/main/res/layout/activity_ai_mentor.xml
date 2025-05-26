@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chatRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="12dp"
+        android:overScrollMode="never" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:gravity="center_vertical">
+
+        <EditText
+            android:id="@+id/inputEditText"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:hint="메시지를 입력하세요" />
+
+        <Button
+            android:id="@+id/sendTextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="전송" />
+
+        <Button
+            android:id="@+id/voiceButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🎤" />
+    </LinearLayout>
+</LinearLayout>

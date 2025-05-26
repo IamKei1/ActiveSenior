@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "427843843187",
+    "project_id": "activeseniordb",
+    "storage_bucket": "activeseniordb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:427843843187:android:350bc91e6d49b5b9662606",
+        "android_client_info": {
+          "package_name": "com.example.activesenior"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWRpBNksjn-iWEnQpDImuvQOY3kM7lHAs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
