@@ -18,7 +18,9 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        resValue(name = "google_maps_key", type = "string", value = mapsApiKey)
+        val mapsApiKey: String = project.properties["MAPS_API_KEY"] as String
+        resValue("string", "google_maps_key", mapsApiKey)
+
     }
 
     buildTypes {
@@ -49,7 +51,7 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
     implementation ("com.google.firebase:firebase-functions:20.3.1")
     implementation ("com.google.android.gms:play-services-location:21.0.1")
-    implementation ("com.google.android.gms:play-services-maps:18.1.0")
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation(libs.play.services.location)
 
     testImplementation(libs.junit)
