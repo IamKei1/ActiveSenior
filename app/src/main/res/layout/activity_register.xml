@@ -15,8 +15,7 @@
             android:layout_height="wrap_content"
             android:text="회원가입"
             android:textAlignment="center"
-            android:textSize="35dp"
-            />
+            android:textSize="35dp" />
 
         <!-- 이름 입력 -->
         <EditText
@@ -24,16 +23,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="이름"
-            android:layout_marginBottom="12dp"
-            />
+            android:layout_marginBottom="12dp" />
 
+        <!-- 성별 -->
         <TextView
-            android:id="@+id/genderEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="성별"
-            android:background="@android:color/transparent"
-            android:textSize="20dp" />
+            android:textSize="20dp"
+            android:background="@android:color/transparent" />
 
         <RadioGroup
             android:id="@+id/radioGroup"
@@ -42,30 +40,59 @@
             android:orientation="horizontal">
 
             <RadioButton
-                android:layout_weight="1"
-                android:text="남"
                 android:id="@+id/rg_btn1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="남" />
 
             <RadioButton
-                android:layout_weight="1"
-                android:text="여"
                 android:id="@+id/rg_btn2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="여" />
         </RadioGroup>
 
-
-        <!-- 나이 입력 -->
-        <EditText
-            android:id="@+id/ageEditText"
+        <!-- 생년월일 -->
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="나이"
-            android:inputType="number"
-            android:layout_marginBottom="12dp" />
+            android:text="생년월일"
+            android:textSize="20dp"
+            android:layout_marginTop="12dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="12dp"
+            android:weightSum="3">
+
+            <EditText
+                android:id="@+id/birthYearEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="년"
+                android:inputType="number" />
+
+            <EditText
+                android:id="@+id/birthMonthEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="월"
+                android:inputType="number" />
+
+            <EditText
+                android:id="@+id/birthDayEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="일"
+                android:inputType="number" />
+        </LinearLayout>
 
         <!-- 역할 선택 -->
         <RadioGroup
@@ -76,17 +103,17 @@
             android:layout_marginBottom="12dp">
 
             <RadioButton
-                android:layout_weight="1"
                 android:id="@+id/mentorRadio"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="멘토" />
 
             <RadioButton
                 android:id="@+id/menteeRadio"
-                android:layout_weight="1"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="멘티" />
         </RadioGroup>
 
@@ -99,12 +126,13 @@
             android:inputType="textEmailAddress"
             android:layout_marginBottom="12dp" />
 
+        <!-- 전화번호 -->
         <EditText
             android:id="@+id/phoneEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="전화번호"
-            android:inputType="textEmailAddress"
+            android:inputType="phone"
             android:layout_marginBottom="12dp" />
 
         <!-- 비밀번호 -->
@@ -114,6 +142,15 @@
             android:layout_height="wrap_content"
             android:hint="비밀번호"
             android:inputType="textPassword"
+            android:layout_marginBottom="12dp" />
+
+        <!-- 비밀번호 재확인 -->
+        <EditText
+            android:id="@+id/passwordConfirmEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="비밀번호 재확인"
+            android:inputType="textPassword"
             android:layout_marginBottom="20dp" />
 
         <!-- 회원가입 버튼 -->
@@ -121,7 +158,6 @@
             android:id="@+id/registerButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="회원가입"
-            />
+            android:text="회원가입" />
     </LinearLayout>
 </ScrollView>
