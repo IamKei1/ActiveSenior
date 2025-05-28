@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ActiveSenior</string>
+    <string name="app_name" translatable="false">ActiveSenior</string>
     <string-array name="radius_options">
         <item>반경선택</item>
         <item>0.5km 이내</item>

@@ -2,6 +2,7 @@ package com.example.activesenior.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -30,6 +31,7 @@ public class HomeActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
+
         // UI 연결
         welcomeTextView = findViewById(R.id.welcomeTextView);
         temperatureTextView = findViewById(R.id.temperatureTextView);
@@ -44,6 +46,10 @@ public class HomeActivity extends AppCompatActivity {
         // 버튼 초기 숨김
         findMentorButton.setVisibility(View.GONE);
         findMenteeButton.setVisibility(View.GONE);
+        manualButton.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, ManualActivity.class);
+            startActivity(intent);
+        });
 
         // 멘토찾기
         findMentorButton.setOnClickListener(v -> {
@@ -51,6 +57,11 @@ public class HomeActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        manualButton.setOnClickListener(v -> {
+            Log.d("HomeActivity", "Manual button clicked");
+            Intent intent = new Intent(HomeActivity.this, ManualActivity.class);
+            startActivity(intent);
+        });
 
 
 
