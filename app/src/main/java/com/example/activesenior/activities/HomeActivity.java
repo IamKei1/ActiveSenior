@@ -1,16 +1,25 @@
 package com.example.activesenior.activities;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.activesenior.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.security.MessageDigest;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -21,10 +30,23 @@ public class HomeActivity extends AppCompatActivity {
     private Button findMentorButton, findMenteeButton;
     private Button aiMentorButton, manualButton, customerServiceButton;
 
+    @RequiresApi(api = Build.VERSION_CODES.P)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        try {
+            Signature[] sigs = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_SIGNING_CERTIFICATES).signingInfo.getApkContentsSigners();
+            for (Signature sig : sigs) {
+                MessageDigest md = MessageDigest.getInstance("SHA-1");
+                md.update(sig.toByteArray());
+                String sha1 = Base64.encodeToString(md.digest(), Base64.NO_WRAP);
+                Log.d("APP_SHA1", "Current Installed SHA-1: " + sha1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         // Firebase 인스턴스
         mAuth = FirebaseAuth.getInstance();

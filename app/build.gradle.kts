@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.google.gms.google.services)
 }
 
-val mapsApiKey: String = project.findProperty("MAPS_API_KEY") as String? ?: ""
+
 
 android {
     namespace = "com.example.activesenior"
@@ -19,7 +19,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         val mapsApiKey: String = project.properties["MAPS_API_KEY"] as String
-        resValue("string", "google_maps_key", mapsApiKey)
+        resValue("string", "google_maps_key", "AIzaSyC48GpywwqGZ5ss2ideZj8OB2E8oOkA1Wg")
 
     }
 
@@ -52,7 +52,7 @@ dependencies {
     implementation ("com.google.firebase:firebase-functions:20.3.1")
     implementation ("com.google.android.gms:play-services-location:21.0.1")
     implementation("com.google.android.gms:play-services-maps:18.2.0")
-    implementation(libs.play.services.location)
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

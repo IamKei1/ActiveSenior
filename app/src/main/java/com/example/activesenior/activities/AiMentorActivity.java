@@ -150,18 +150,16 @@ public class AiMentorActivity extends AppCompatActivity {
         functions.getHttpsCallable("findNearbyPlace")
                 .call(data)
                 .addOnSuccessListener(result -> {
-                    List<Map<String, Object>> places = (List<Map<String, Object>>) ((Map<String, Object>) result.getData()).get("results");
+                    Map<String, Object> dataMap = (Map<String, Object>) result.getData();
+                    List<Map<String, Object>> places = (List<Map<String, Object>>) dataMap.get("results");
 
-                    if (places.isEmpty()) {
+                    if (places == null || places.isEmpty()) {
                         removeLoadingAndAdd("근처에 해당 장소를 찾을 수 없습니다.");
-                        return;
+                    } else {
+                        String reply = "근처에 " + places.size() + "개의 장소가 검색되었습니다.\n지도에서 확인해보세요!";
+                        removeLoadingAndAdd(reply);
                     }
 
-                    // 가장 첫 장소 이름은 추출하지만 사용 안 함
-                    String reply = "근처에 " + places.size() + "개의 장소가 검색되었습니다.\n지도에서 확인해보세요!";
-                    removeLoadingAndAdd(reply);
-
-                    // 🔽 자동 지도 연결: 질문 키워드 기반
                     openMapWithFallback(question, currentLat, currentLng);
                 })
                 .addOnFailureListener(e -> removeLoadingAndAdd("장소 검색 실패: " + e.getMessage()));
