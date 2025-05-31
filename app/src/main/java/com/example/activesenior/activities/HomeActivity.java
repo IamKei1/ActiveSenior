@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import android.content.Intent;
 
 import com.example.activesenior.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -73,15 +74,16 @@ public class HomeActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-
-
-
         // AI멘토에게 물어보기
         aiMentorButton.setOnClickListener(v -> {
             Intent intent = new Intent(HomeActivity.this, AiMentorActivity.class);
             startActivity(intent);
         });
 
+        customerServiceButton.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, CustomerServiceActivity.class);
+            startActivity(intent);
+        });
         // 사용자 정보 로드
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {

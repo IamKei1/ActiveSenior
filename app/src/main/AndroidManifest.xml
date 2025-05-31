@@ -32,6 +32,8 @@
         <activity android:name=".activities.RegisterActivity" />
         <activity android:name=".activities.HomeActivity" />
         <activity android:name=".activities.AiMentorActivity" />
+        <activity android:name=".activities.CustomerServiceActivity" />
+
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
