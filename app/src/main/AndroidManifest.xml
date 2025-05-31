@@ -32,7 +32,11 @@
         <activity android:name=".activities.RegisterActivity" />
         <activity android:name=".activities.HomeActivity" />
         <activity android:name=".activities.AiMentorActivity" />
+
         <activity android:name=".activities.CustomerServiceActivity" />
+
+        <activity android:name=".activities.ManualActivity" />
+
 
 
         <meta-data

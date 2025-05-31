@@ -3,6 +3,7 @@ package com.example.activesenior.activities;
 
 // 안드로이드 UI 관련 클래스 import
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.Button;
 import android.text.TextUtils;
@@ -69,7 +70,9 @@ public class MainActivity extends AppCompatActivity {
                         finish(); // 현재 화면 종료
                     } else {
                         // 로그인 실패 시 메시지 출력
-                        Toast.makeText(MainActivity.this, "로그인 실패: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        String errorMsg = task.getException().getMessage();
+                        Toast.makeText(MainActivity.this, "로그인 실패: " + errorMsg, Toast.LENGTH_SHORT).show();
+                        Log.e("LoginError", errorMsg);
                     }
                 });
     }
