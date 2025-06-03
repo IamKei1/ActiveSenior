@@ -133,6 +133,11 @@ public class ChatActivity extends AppCompatActivity {
                     chatMessages.clear();
                     lastMessageDate = null;
 
+                    // 🔹 실제 상대 UID 계산
+                    String actualReceiverId = currentUserId.equals(participant1Id)
+                            ? participant2Id
+                            : participant1Id;
+
                     for (DocumentSnapshot doc : snapshots) {
                         String message = doc.getString("message");
                         String senderId = doc.getString("senderId");
@@ -141,17 +146,21 @@ public class ChatActivity extends AppCompatActivity {
 
                         // 날짜 헤더 삽입
                         if (lastMessageDate == null || !isSameDay(lastMessageDate, date)) {
-                            chatMessages.add(new ChatMessage("", date, true, senderId, currentUserId));
+                            chatMessages.add(new ChatMessage("", date, true, senderId, actualReceiverId));
                             lastMessageDate = date;
                         }
 
-                        // 메시지 삽입
-                        chatMessages.add(new ChatMessage(message, date, false, senderId, currentUserId));
+                        // 메시지 객체 생성
+                        ChatMessage chatMessage = new ChatMessage(message, date, false, senderId, actualReceiverId);
+                        chatMessage.setReadBy((List<String>) doc.get("readBy"));
+                        chatMessages.add(chatMessage);
 
                         // 읽음 처리
-                        List<String> readBy = (List<String>) doc.get("readBy");
-                        if (readBy == null || !readBy.contains(currentUserId)) {
-                            doc.getReference().update("readBy", FieldValue.arrayUnion(currentUserId));
+                        if (!senderId.equals(currentUserId)) {
+                            List<String> readBy = (List<String>) doc.get("readBy");
+                            if (readBy == null || !readBy.contains(currentUserId)) {
+                                doc.getReference().update("readBy", FieldValue.arrayUnion(currentUserId));
+                            }
                         }
                     }
 
@@ -160,6 +169,7 @@ public class ChatActivity extends AppCompatActivity {
                     watermarkText.setVisibility(chatMessages.isEmpty() ? View.VISIBLE : View.GONE);
                 });
     }
+
 
 
     private void startVoiceRecognition() {

@@ -424,40 +424,70 @@ public class FindMentorActivity extends AppCompatActivity implements OnMapReadyC
 
     private void onMentorSelected(User mentor) {
         String currentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+
         db.collection("users").document(currentUserUid).get()
                 .addOnSuccessListener(doc -> {
                     if (!doc.exists()) return;
 
                     String currentUserName = doc.getString("name");
 
-                    // 매칭 정보 업데이트
-                    db.collection("users").document(currentUserUid)
-                            .update("matchedUserId", mentor.getUid());
-                    db.collection("users").document(mentor.getUid())
-                            .update("matchedUserId", currentUserUid, "isAvailable", false);
+                    // 참가자 목록 정렬
+                    List<String> participants = Arrays.asList(currentUserUid, mentor.getUid());
+                    Collections.sort(participants);  // 🔑 Firestore whereEqualTo 배열 일치용
 
-                    // ChatRoom 문서 생성용 데이터
-                    Map<String, Object> chatRoom = new HashMap<>();
-                    chatRoom.put("participants", Arrays.asList(currentUserUid, mentor.getUid()));
-                    chatRoom.put("participant1Id", currentUserUid);
-                    chatRoom.put("participant2Id", mentor.getUid());
-                    chatRoom.put("participant1Name", currentUserName);
-                    chatRoom.put("participant2Name", mentor.getName());
-                    chatRoom.put("lastMessage", "채팅이 시작되었습니다");
-                    chatRoom.put("lastTimestamp", new Date());
-
-                    db.collection("chat_rooms").add(chatRoom)
-                            .addOnSuccessListener(docRef -> {
-                                Intent intent = new Intent(FindMentorActivity.this, ChatActivity.class);
-                                intent.putExtra("roomId", docRef.getId());
-                                intent.putExtra("participantUid", mentor.getUid());
-                                intent.putExtra("participantName", mentor.getName());
-                                startActivity(intent);
+                    // ① 기존 채팅방 있는지 확인
+                    db.collection("chat_rooms")
+                            .whereEqualTo("participants", participants)
+                            .get()
+                            .addOnSuccessListener(querySnapshot -> {
+                                if (!querySnapshot.isEmpty()) {
+                                    // ✅ 이미 존재하는 채팅방이 있다면 해당 채팅방으로 이동
+                                    DocumentSnapshot existingRoom = querySnapshot.getDocuments().get(0);
+                                    Intent intent = new Intent(FindMentorActivity.this, ChatActivity.class);
+                                    intent.putExtra("roomId", existingRoom.getId());
+                                    intent.putExtra("participantUid", mentor.getUid());
+                                    intent.putExtra("participantName", mentor.getName());
+                                    startActivity(intent);
+                                } else {
+                                    // ❌ 없으면 새로 채팅방 생성
+                                    createNewChatRoom(currentUserUid, currentUserName, mentor);
+                                }
                             });
                 });
     }
+
+    private void createNewChatRoom(String currentUserUid, String currentUserName, User mentor) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        List<String> participants = Arrays.asList(currentUserUid, mentor.getUid());
+        Collections.sort(participants);
+
+        Map<String, Object> chatRoom = new HashMap<>();
+        chatRoom.put("participants", participants);
+        chatRoom.put("participant1Id", currentUserUid);
+        chatRoom.put("participant2Id", mentor.getUid());
+        chatRoom.put("participant1Name", currentUserName);
+        chatRoom.put("participant2Name", mentor.getName());
+        chatRoom.put("lastMessage", "채팅이 시작되었습니다");
+        chatRoom.put("lastTimestamp", new Date());
+
+        // 🔄 매칭 정보 업데이트
+        db.collection("users").document(currentUserUid)
+                .update("matchedUserId", mentor.getUid());
+        db.collection("users").document(mentor.getUid())
+                .update("matchedUserId", currentUserUid, "isAvailable", false);
+
+        db.collection("chat_rooms").add(chatRoom)
+                .addOnSuccessListener(docRef -> {
+                    Intent intent = new Intent(FindMentorActivity.this, ChatActivity.class);
+                    intent.putExtra("roomId", docRef.getId());
+                    intent.putExtra("participantUid", mentor.getUid());
+                    intent.putExtra("participantName", mentor.getName());
+                    startActivity(intent);
+                });
+    }
+
 
 
 

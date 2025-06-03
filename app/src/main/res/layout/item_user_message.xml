@@ -23,5 +23,17 @@
         android:textColor="#888888"
         android:textSize="12sp"
         android:layout_marginTop="4dp" />
+
+    <TextView
+        android:id="@+id/readStatusTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="읽음"
+        android:textSize="12sp"
+        android:textColor="#888888"
+        android:layout_gravity="end"
+        android:layout_marginTop="2dp"/>
+
+
 </LinearLayout>
 

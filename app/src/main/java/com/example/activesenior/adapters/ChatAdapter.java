@@ -68,6 +68,8 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } else if (holder instanceof OtherViewHolder) {
             ((OtherViewHolder) holder).bind(message);
         }
+
+
     }
 
     static class DateViewHolder extends RecyclerView.ViewHolder {
@@ -85,20 +87,32 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     static class UserViewHolder extends RecyclerView.ViewHolder {
-        TextView userMessage, timeTextView;
+        TextView userMessage, timeTextView, readStatusTextView; // ✅ 읽음 상태 표시 추가
 
         UserViewHolder(View itemView) {
             super(itemView);
             userMessage = itemView.findViewById(R.id.userMessage);
             timeTextView = itemView.findViewById(R.id.userTime);
+            readStatusTextView = itemView.findViewById(R.id.readStatusTextView); // ✅ 레이아웃에 추가 필요
         }
 
         void bind(ChatMessage message) {
             userMessage.setText(message.getMessage());
+
             SimpleDateFormat sdf = new SimpleDateFormat("a h:mm", Locale.getDefault());
             timeTextView.setText(sdf.format(message.getTimestamp()));
+
+            // ✅ 읽음 여부 표시
+            if (message.getReadBy() != null && message.getReadBy().contains(message.getReceiverId())) {
+                readStatusTextView.setText("읽음");
+            } else {
+                readStatusTextView.setText("안읽음");
+            }
+
+            readStatusTextView.setVisibility(View.VISIBLE);
         }
     }
+
 
     static class OtherViewHolder extends RecyclerView.ViewHolder {
         TextView aiMessage, timeTextView;

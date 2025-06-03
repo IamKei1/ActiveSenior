@@ -1,6 +1,7 @@
 package com.example.activesenior.models;
 
 import java.util.Date;
+import java.util.List;
 
 public class ChatMessage {
     private String message;
@@ -8,6 +9,8 @@ public class ChatMessage {
     private boolean isDateHeader;
     private String senderId;
     private String receiverId;
+    private List<String> readBy;
+
 
     // 기존 생성자
     public ChatMessage(String message, Date timestamp, boolean isDateHeader) {
@@ -32,10 +35,16 @@ public class ChatMessage {
     public boolean isDateHeader() { return isDateHeader; }
     public String getSenderId() { return senderId; }
     public String getReceiverId() { return receiverId; }
+    public List<String> getReadBy() {
+        return readBy;
+    }
 
     public void setMessage(String message) { this.message = message; }
     public void setTimestamp(Date timestamp) { this.timestamp = timestamp; }
     public void setDateHeader(boolean dateHeader) { isDateHeader = dateHeader; }
     public void setSenderId(String senderId) { this.senderId = senderId; }
     public void setReceiverId(String receiverId) { this.receiverId = receiverId; }
+    public void setReadBy(List<String> readBy) {
+        this.readBy = readBy;
+    }
 }
