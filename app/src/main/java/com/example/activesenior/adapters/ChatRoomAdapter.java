@@ -19,13 +19,16 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ChatRo
 
     private List<ChatRoom> chatRoomList;
     private OnChatRoomClickListener listener;
+    private String currentUid;
 
     public interface OnChatRoomClickListener {
         void onChatRoomClick(ChatRoom chatRoom);
     }
 
-    public ChatRoomAdapter(List<ChatRoom> chatRoomList, OnChatRoomClickListener listener) {
+
+    public ChatRoomAdapter(List<ChatRoom> chatRoomList, String currentUid, OnChatRoomClickListener listener) {
         this.chatRoomList = chatRoomList;
+        this.currentUid = currentUid;
         this.listener = listener;
     }
 
@@ -60,23 +63,27 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ChatRo
         }
 
         void bind(ChatRoom chatRoom) {
-            participantNameText.setText(chatRoom.getParticipantName());
+            // 현재 사용자 UID에 따라 상대방 이름 선택
+            String participantName;
+            if (currentUid.equals(chatRoom.getParticipant1Id())) {
+                participantName = chatRoom.getParticipant2Name();
+            } else {
+                participantName = chatRoom.getParticipant1Name();
+            }
+            participantNameText.setText(participantName != null ? participantName : "상대방");
 
             // 메시지 텍스트 처리
             String lastMessage = chatRoom.getLastMessage();
-            if (lastMessage == null || lastMessage.trim().isEmpty()) {
-                lastMessageText.setText("(메시지 없음)");
-            } else {
-                lastMessageText.setText(lastMessage);
-            }
+            lastMessageText.setText(
+                    (lastMessage == null || lastMessage.trim().isEmpty()) ? "(메시지 없음)" : lastMessage
+            );
 
-            // 날짜 포맷 처리 (오늘인 경우 시간만 표시)
+            // 날짜 포맷 처리
             Date timestamp = chatRoom.getLastTimestamp();
             if (timestamp != null) {
                 SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
                 SimpleDateFormat dateFormat = new SimpleDateFormat("M월 d일", Locale.getDefault());
 
-                // 오늘 날짜인지 비교
                 Date now = new Date();
                 SimpleDateFormat dayCheckFormat = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
                 boolean isToday = dayCheckFormat.format(now).equals(dayCheckFormat.format(timestamp));
@@ -90,6 +97,7 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ChatRo
             // 채팅방 클릭 리스너
             itemView.setOnClickListener(v -> listener.onChatRoomClick(chatRoom));
         }
+
 
     }
 }

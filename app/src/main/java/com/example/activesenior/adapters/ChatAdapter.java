@@ -16,12 +16,14 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int VIEW_TYPE_DATE = 0;
     private static final int VIEW_TYPE_USER = 1;
-    private static final int VIEW_TYPE_AI = 2;
+    private static final int VIEW_TYPE_OTHER = 2;
 
     private List<ChatMessage> chatMessages;
+    private String currentUserId;
 
-    public ChatAdapter(List<ChatMessage> chatMessages) {
+    public ChatAdapter(List<ChatMessage> chatMessages, String currentUserId) {
         this.chatMessages = chatMessages;
+        this.currentUserId = currentUserId;
     }
 
     @Override
@@ -30,7 +32,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if (message.isDateHeader()) {
             return VIEW_TYPE_DATE;
         }
-        return message.isUser() ? VIEW_TYPE_USER : VIEW_TYPE_AI;
+        return message.getSenderId().equals(currentUserId) ? VIEW_TYPE_USER : VIEW_TYPE_OTHER;
     }
 
     @Override
@@ -51,7 +53,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             return new UserViewHolder(view);
         } else {
             View view = inflater.inflate(R.layout.item_ai_message, parent, false);
-            return new AIViewHolder(view);
+            return new OtherViewHolder(view);
         }
     }
 
@@ -63,8 +65,8 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ((DateViewHolder) holder).bind(message);
         } else if (holder instanceof UserViewHolder) {
             ((UserViewHolder) holder).bind(message);
-        } else if (holder instanceof AIViewHolder) {
-            ((AIViewHolder) holder).bind(message);
+        } else if (holder instanceof OtherViewHolder) {
+            ((OtherViewHolder) holder).bind(message);
         }
     }
 
@@ -98,10 +100,10 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    static class AIViewHolder extends RecyclerView.ViewHolder {
+    static class OtherViewHolder extends RecyclerView.ViewHolder {
         TextView aiMessage, timeTextView;
 
-        AIViewHolder(View itemView) {
+        OtherViewHolder(View itemView) {
             super(itemView);
             aiMessage = itemView.findViewById(R.id.aiMessage);
             timeTextView = itemView.findViewById(R.id.aiTime);

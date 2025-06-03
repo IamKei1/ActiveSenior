@@ -42,19 +42,20 @@ public class ChatRoomActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_room);
 
-
-
         db = FirebaseFirestore.getInstance();
         currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         emptyChatRoomText = findViewById(R.id.emptyChatRoomText);
         chatRoomRecyclerView = findViewById(R.id.chatRoomRecyclerView);
         chatRoomRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        chatRoomAdapter = new ChatRoomAdapter(chatRoomList, chatRoom -> {
+        chatRoomAdapter = new ChatRoomAdapter(chatRoomList, currentUid, chatRoom -> {
+            String participantUid = currentUid.equals(chatRoom.getParticipant1Id()) ? chatRoom.getParticipant2Id() : chatRoom.getParticipant1Id();
+            String participantName = currentUid.equals(chatRoom.getParticipant1Id()) ? chatRoom.getParticipant2Name() : chatRoom.getParticipant1Name();
+
             Intent intent = new Intent(ChatRoomActivity.this, ChatActivity.class);
             intent.putExtra("roomId", chatRoom.getRoomId());
-            intent.putExtra("participantUid", chatRoom.getParticipantUid());
-            intent.putExtra("participantName", chatRoom.getParticipantName());
+            intent.putExtra("participantUid", participantUid);
+            intent.putExtra("participantName", participantName);
             startActivity(intent);
         });
 
@@ -71,7 +72,7 @@ public class ChatRoomActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         if (chatRoomListener != null) {
-            chatRoomListener.remove(); // 실시간 리스너 해제
+            chatRoomListener.remove();
         }
     }
 
@@ -86,17 +87,18 @@ public class ChatRoomActivity extends AppCompatActivity {
                     }
 
                     chatRoomList.clear();
+
                     for (DocumentSnapshot doc : queryDocumentSnapshots) {
                         ChatRoom chatRoom = doc.toObject(ChatRoom.class);
-                        if (chatRoom != null) {
-                            chatRoom.setRoomId(doc.getId());
+                        if (chatRoom == null) continue;
 
-                            if (chatRoom.getLastMessage() == null) {
-                                chatRoom.setLastMessage("(메시지 없음)");
-                            }
+                        chatRoom.setRoomId(doc.getId());
 
-                            chatRoomList.add(chatRoom);
+                        if (chatRoom.getLastMessage() == null) {
+                            chatRoom.setLastMessage("(메시지 없음)");
                         }
+
+                        chatRoomList.add(chatRoom);
                     }
 
                     Collections.sort(chatRoomList, Comparator.comparing(
@@ -105,11 +107,7 @@ public class ChatRoomActivity extends AppCompatActivity {
 
                     chatRoomAdapter.notifyDataSetChanged();
 
-                    if (chatRoomList.isEmpty()) {
-                        emptyChatRoomText.setVisibility(View.VISIBLE);
-                    } else {
-                        emptyChatRoomText.setVisibility(View.GONE);
-                    }
+                    emptyChatRoomText.setVisibility(chatRoomList.isEmpty() ? View.VISIBLE : View.GONE);
                 });
     }
 }

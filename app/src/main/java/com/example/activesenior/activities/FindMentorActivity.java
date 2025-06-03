@@ -425,7 +425,6 @@ public class FindMentorActivity extends AppCompatActivity implements OnMapReadyC
     private void onMentorSelected(User mentor) {
         String currentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        // 1. 현재 사용자 정보 가져오기 (이름 포함)
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("users").document(currentUserUid).get()
                 .addOnSuccessListener(doc -> {
@@ -433,25 +432,24 @@ public class FindMentorActivity extends AppCompatActivity implements OnMapReadyC
 
                     String currentUserName = doc.getString("name");
 
-                    // 2. 양쪽 사용자에 matchedUserId 설정 및 멘토 isAvailable = false 처리
+                    // 매칭 정보 업데이트
                     db.collection("users").document(currentUserUid)
                             .update("matchedUserId", mentor.getUid());
-
                     db.collection("users").document(mentor.getUid())
                             .update("matchedUserId", currentUserUid, "isAvailable", false);
 
-                    // 3. ChatRoom 생성 정보 구성
+                    // ChatRoom 문서 생성용 데이터
                     Map<String, Object> chatRoom = new HashMap<>();
                     chatRoom.put("participants", Arrays.asList(currentUserUid, mentor.getUid()));
-                    chatRoom.put("participantName", mentor.getName());         // 내가 볼 상대 이름
-                    chatRoom.put("participantUid", mentor.getUid());
+                    chatRoom.put("participant1Id", currentUserUid);
+                    chatRoom.put("participant2Id", mentor.getUid());
+                    chatRoom.put("participant1Name", currentUserName);
+                    chatRoom.put("participant2Name", mentor.getName());
                     chatRoom.put("lastMessage", "채팅이 시작되었습니다");
                     chatRoom.put("lastTimestamp", new Date());
 
-                    // 4. Firestore에 chat_rooms 문서 생성
                     db.collection("chat_rooms").add(chatRoom)
                             .addOnSuccessListener(docRef -> {
-                                // 5. 생성된 채팅방으로 이동
                                 Intent intent = new Intent(FindMentorActivity.this, ChatActivity.class);
                                 intent.putExtra("roomId", docRef.getId());
                                 intent.putExtra("participantUid", mentor.getUid());
@@ -460,6 +458,7 @@ public class FindMentorActivity extends AppCompatActivity implements OnMapReadyC
                             });
                 });
     }
+
 
 
 

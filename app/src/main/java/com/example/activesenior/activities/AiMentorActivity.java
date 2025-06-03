@@ -39,6 +39,7 @@ public class AiMentorActivity extends AppCompatActivity {
     private FirebaseFunctions functions = FirebaseFunctions.getInstance();
     private Date lastMessageDate = null;
     private TextView chatWatermarkTextView;
+    private String currentUserId;
 
     private FusedLocationProviderClient fusedLocationClient;
     private double currentLat = 0.0;
@@ -54,9 +55,10 @@ public class AiMentorActivity extends AppCompatActivity {
         voiceButton = findViewById(R.id.voiceButton);
         chatRecyclerView = findViewById(R.id.chatRecyclerView);
         chatWatermarkTextView = findViewById(R.id.chatWatermarkTextView);
+        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         chatMessages = new ArrayList<>();
-        chatAdapter = new ChatAdapter(chatMessages);
+        chatAdapter = new ChatAdapter(chatMessages, currentUserId);
         chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         chatRecyclerView.setAdapter(chatAdapter);
 
@@ -103,20 +105,23 @@ public class AiMentorActivity extends AppCompatActivity {
         String receiverId = isUser ? "AI" : currentUid;
 
         // 날짜 헤더가 필요한 경우 추가
+        // 날짜 헤더가 필요한 경우 추가
         if (lastMessageDate == null || !isSameDay(lastMessageDate, now)) {
-            chatMessages.add(new ChatMessage("", false, now, true));
+            chatMessages.add(new ChatMessage("", now, true, senderId, receiverId));
             lastMessageDate = now;
         }
 
+// 워터마크 제거
         if (chatWatermarkTextView.getVisibility() == View.VISIBLE) {
             chatWatermarkTextView.setVisibility(View.GONE);
         }
 
-
-        ChatMessage chatMessage = new ChatMessage(message, isUser, now, false, senderId, receiverId);
+// 일반 메시지 추가
+        ChatMessage chatMessage = new ChatMessage(message, now, false, senderId, receiverId);
         chatMessages.add(chatMessage);
         chatAdapter.notifyItemInserted(chatMessages.size() - 1);
         chatRecyclerView.scrollToPosition(chatMessages.size() - 1);
+
     }
 
 

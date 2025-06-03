@@ -12,8 +12,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -41,16 +39,15 @@ public class ChatActivity extends AppCompatActivity {
     private Date lastMessageDate = null;
 
     private FirebaseFirestore db;
-    private String currentUid, roomId;
+    private String currentUserId, roomId;
+    private String participant1Id, participant2Id, receiverUid;
 
-    private final int VOICE_REQUEST_CODE = 1001;
+    private static final int VOICE_REQUEST_CODE = 1001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-
-
 
         chatRecyclerView = findViewById(R.id.chatRecyclerView);
         inputEditText = findViewById(R.id.inputEditText);
@@ -58,13 +55,13 @@ public class ChatActivity extends AppCompatActivity {
         voiceButton = findViewById(R.id.voiceButton);
         watermarkText = findViewById(R.id.chatWatermarkTextView);
 
-        chatAdapter = new ChatAdapter(chatMessages);
+        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        db = FirebaseFirestore.getInstance();
+        roomId = getIntent().getStringExtra("roomId");
+
+        chatAdapter = new ChatAdapter(chatMessages, currentUserId);
         chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         chatRecyclerView.setAdapter(chatAdapter);
-
-        db = FirebaseFirestore.getInstance();
-        currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        roomId = getIntent().getStringExtra("roomId");
 
         sendTextButton.setOnClickListener(v -> {
             String msg = inputEditText.getText().toString().trim();
@@ -72,20 +69,12 @@ public class ChatActivity extends AppCompatActivity {
                 sendMessage(msg);
                 inputEditText.setText("");
 
-                String receiverUid = getIntent().getStringExtra("participantUid");
-                String senderUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-                Log.d("CHATROOM_DEBUG", "🔥 participantUid: " + receiverUid);
-                Log.d("CHATROOM_DEBUG", "🙋 내 UID: " + senderUid);
-
-
-                if (receiverUid != null && !receiverUid.equals(senderUid)) {
-                    Log.d("FCM_TRACE", "멘티가 메시지 전송 시도");
+                if (receiverUid != null && !receiverUid.equals(currentUserId)) {
+                    Log.d("FCM_TRACE", "메시지 전송 시도 -> receiverUid: " + receiverUid);
                     sendNotificationToUser(receiverUid, "새 메시지", msg);
                 } else {
-                    Log.w("FCM_TRACE", "수신자가 자기 자신으로 판단됨. 알림 전송 안 함");
+                    Log.w("FCM_TRACE", "수신자 UID가 비정상적이거나 자기 자신입니다");
                 }
-
             }
         });
 
@@ -99,29 +88,43 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        listenForMessages();
+        loadRoomParticipantsAndListen();
+    }
+
+    private void loadRoomParticipantsAndListen() {
+        db.collection("chat_rooms").document(roomId).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    participant1Id = documentSnapshot.getString("participant1Id");
+                    participant2Id = documentSnapshot.getString("participant2Id");
+
+                    if (currentUserId.equals(participant1Id)) {
+                        receiverUid = participant2Id;
+                    } else {
+                        receiverUid = participant1Id;
+                    }
+
+                    listenForMessages();
+                })
+                .addOnFailureListener(e -> Log.e("CHAT_INIT", "채팅방 정보 로딩 실패: " + e.getMessage()));
     }
 
     private void sendMessage(String msg) {
         Map<String, Object> messageData = new HashMap<>();
         messageData.put("message", msg);
-        messageData.put("senderId", currentUid);
+        messageData.put("senderId", currentUserId);
         messageData.put("timestamp", new Date());
-        messageData.put("readBy", Arrays.asList(currentUid));
+        messageData.put("readBy", Arrays.asList(currentUserId));
 
-        db.collection("chat_rooms")
-                .document(roomId)
+        db.collection("chat_rooms").document(roomId)
                 .collection("messages")
                 .add(messageData);
 
-        db.collection("chat_rooms")
-                .document(roomId)
+        db.collection("chat_rooms").document(roomId)
                 .update("lastMessage", msg, "lastTimestamp", new Date());
     }
 
     private void listenForMessages() {
-        db.collection("chat_rooms")
-                .document(roomId)
+        db.collection("chat_rooms").document(roomId)
                 .collection("messages")
                 .orderBy("timestamp", Query.Direction.ASCENDING)
                 .addSnapshotListener((snapshots, e) -> {
@@ -135,27 +138,29 @@ public class ChatActivity extends AppCompatActivity {
                         String senderId = doc.getString("senderId");
                         Timestamp ts = doc.getTimestamp("timestamp");
                         Date date = ts != null ? ts.toDate() : new Date();
-                        boolean isUser = senderId.equals(currentUid);
 
+                        // 날짜 헤더 삽입
                         if (lastMessageDate == null || !isSameDay(lastMessageDate, date)) {
-                            chatMessages.add(new ChatMessage("", false, date, true));
+                            chatMessages.add(new ChatMessage("", date, true, senderId, currentUserId));
                             lastMessageDate = date;
                         }
 
-                        chatMessages.add(new ChatMessage(message, isUser, date, false));
+                        // 메시지 삽입
+                        chatMessages.add(new ChatMessage(message, date, false, senderId, currentUserId));
 
+                        // 읽음 처리
                         List<String> readBy = (List<String>) doc.get("readBy");
-                        if (readBy == null || !readBy.contains(currentUid)) {
-                            doc.getReference().update("readBy", FieldValue.arrayUnion(currentUid));
+                        if (readBy == null || !readBy.contains(currentUserId)) {
+                            doc.getReference().update("readBy", FieldValue.arrayUnion(currentUserId));
                         }
                     }
 
                     chatAdapter.notifyDataSetChanged();
                     chatRecyclerView.scrollToPosition(chatMessages.size() - 1);
-
-                    watermarkText.setVisibility(chatMessages.size() > 0 ? View.GONE : View.VISIBLE);
+                    watermarkText.setVisibility(chatMessages.isEmpty() ? View.VISIBLE : View.GONE);
                 });
     }
+
 
     private void startVoiceRecognition() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -177,8 +182,7 @@ public class ChatActivity extends AppCompatActivity {
         if (requestCode == VOICE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             if (results != null && !results.isEmpty()) {
-                String recognizedText = results.get(0);
-                inputEditText.setText(recognizedText);
+                inputEditText.setText(results.get(0));
             }
         }
     }
@@ -193,18 +197,10 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void sendNotificationToUser(String targetUid, String title, String body) {
-        Log.d("FCM_DEBUG", "sendNotificationToUser() 호출됨");
-        Log.d("FCM_DEBUG", "Sender: " + FirebaseAuth.getInstance().getCurrentUser().getUid());
-        Log.d("FCM_DEBUG", "Receiver: " + targetUid);
-        Log.d("FCM_DEBUG", "Title: " + title);
-        Log.d("FCM_DEBUG", "Body: " + body);
-
         Map<String, Object> data = new HashMap<>();
         data.put("targetUid", targetUid);
-
         data.put("title", title);
         data.put("body", body);
-        Log.d("FCM_DEBUG", "멘티 -> 멘토 알림 시도, targetUid = " + targetUid);
 
         FirebaseFunctions.getInstance()
                 .getHttpsCallable("sendChatNotification")

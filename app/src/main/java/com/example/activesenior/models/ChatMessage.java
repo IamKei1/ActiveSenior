@@ -4,25 +4,22 @@ import java.util.Date;
 
 public class ChatMessage {
     private String message;
-    private boolean isUser;
     private Date timestamp;
     private boolean isDateHeader;
     private String senderId;
     private String receiverId;
 
     // 기존 생성자
-    public ChatMessage(String message, boolean isUser, Date timestamp, boolean isDateHeader) {
+    public ChatMessage(String message, Date timestamp, boolean isDateHeader) {
         this.message = message;
-        this.isUser = isUser;
         this.timestamp = timestamp;
         this.isDateHeader = isDateHeader;
     }
 
     // 새로운 생성자: senderId/receiverId까지 포함
-    public ChatMessage(String message, boolean isUser, Date timestamp, boolean isDateHeader,
+    public ChatMessage(String message, Date timestamp, boolean isDateHeader,
                        String senderId, String receiverId) {
         this.message = message;
-        this.isUser = isUser;
         this.timestamp = timestamp;
         this.isDateHeader = isDateHeader;
         this.senderId = senderId;
@@ -31,14 +28,12 @@ public class ChatMessage {
 
     // Getter/Setter
     public String getMessage() { return message; }
-    public boolean isUser() { return isUser; }
     public Date getTimestamp() { return timestamp; }
     public boolean isDateHeader() { return isDateHeader; }
     public String getSenderId() { return senderId; }
     public String getReceiverId() { return receiverId; }
 
     public void setMessage(String message) { this.message = message; }
-    public void setUser(boolean user) { isUser = user; }
     public void setTimestamp(Date timestamp) { this.timestamp = timestamp; }
     public void setDateHeader(boolean dateHeader) { isDateHeader = dateHeader; }
     public void setSenderId(String senderId) { this.senderId = senderId; }
