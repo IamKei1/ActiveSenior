@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+
+
+        <!-- 2. 회원탈퇴 섹션 -->
+        <TextView
+            android:text="회원탈퇴"
+            android:layout_marginTop="100sp"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textSize="24sp"
+            android:padding="10sp"
+            android:layout_marginBottom="30dp"
+            android:background="@drawable/rounded_basic_box"
+            android:shape = "rectangle"
+            android:radius = "12dp"
+            android:text="회원탈되 페이지 입니다.\n회원탈퇴시 현재 계정의 정보가 즉시 삭제됩니다
+따라서 삭제는 반드시 신중하게 선택하시길 바랍니다.\n"
+            />
+
+        <EditText
+            android:id="@+id/etDeleteEmail"
+            android:hint="이메일"
+            android:inputType="textEmailAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/etDeletePassword"
+            android:hint="비밀번호"
+            android:inputType="textPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" />
+
+        <Button
+            android:id="@+id/btnDeleteAccount"
+            android:text="탈퇴하기"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#CCCCCC"
+            android:layout_marginVertical="16dp"/>
+
+
+
+    </LinearLayout>
+</ScrollView>

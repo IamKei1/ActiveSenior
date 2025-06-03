@@ -1,104 +1,173 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:padding="20dp"
+    <!-- 본문 콘텐츠 (스크롤 가능) -->
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal">
+        android:layout_height="match_parent"
+        >
 
-        <!-- 말풍선 안내 -->
         <LinearLayout
-            android:id="@+id/bubbleLayout"
-            android:orientation="horizontal"
-            android:visibility="visible"
+            android:orientation="vertical"
+            android:padding="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:background="@drawable/bubble_background"
-            android:layout_marginBottom="10dp">
+            android:gravity="center_horizontal">
 
+            <!-- 타이틀 -->
             <TextView
-                android:id="@+id/bubbleTextView"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="사용자 매뉴얼 입니다.\n각 버튼을 클릭하면 각 버튼의 기능을 설명합니다."
-                android:textColor="#000000"
-                android:textSize="16sp" />
-
-            <ImageButton
-                android:id="@+id/closeBubbleButton"
+                android:layout_marginTop="100dp"
+                android:text="사용자 메뉴얼"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="20dp"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@android:drawable/ic_menu_close_clear_cancel"
-                android:background="@android:color/transparent"
-                android:contentDescription="닫기" />
+                android:background="@drawable/rounded_blue_box"
+                android:backgroundTintMode="src_in"
+                android:clipToOutline="true"
+                android:elevation="4dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="36dp"
+                >
+
+
+                <TextView
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:text="나의 온도 : 36.5℃"
+                    android:textColor="#FFFFFF"
+                    android:textSize="28sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:text="홍길동님 환영합니다"
+                    android:textColor="#FFFFFF"
+                    android:textSize="28sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="현재 멘토/멘티 활동\n [대기중]"
+                    android:textColor="#FFFFFF"
+                    android:textSize="24sp" />
+            </LinearLayout>
+
+            <!-- 각 버튼 -->
+            <Button
+                android:id="@+id/findMentorButton_manual"
+                android:text="멘토 찾기"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:backgroundTint="#444444"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:contentDescription="멘토 찾기 버튼. 멘토를 찾는 기능입니다." />
+
+            <Button
+                android:id="@+id/findMenteeButton_manual"
+                android:text="멘티 찾기"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:backgroundTint="#444444"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:contentDescription="멘티 찾기 버튼. 멘티를 찾는 기능입니다." />
+
+            <Button
+                android:id="@+id/aiMentorButton_manual"
+                android:text="AI멘토에게 물어보기"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:backgroundTint="#444444"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:contentDescription="AI 멘토에게 질문할 수 있는 기능입니다." />
+
+            <Button
+                android:id="@+id/manualButton_manual"
+                android:text="사용자 매뉴얼"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:backgroundTint="#444444"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:enabled="false"
+                android:contentDescription="현재 사용자 매뉴얼 화면입니다." />
+
+            <Button
+                android:id="@+id/customerServiceButton_manual"
+                android:text="고객서비스"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:backgroundTint="#444444"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:contentDescription="고객 서비스 센터로 이동하는 버튼입니다." />
+
         </LinearLayout>
+    </ScrollView>
 
-        <!-- 타이틀 -->
+    <!-- 2. 어두운 배경 오버레이 -->
+    <View
+        android:id="@+id/dimOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99000000"
+        android:visibility="gone"
+        android:clickable="true" />
+
+    <!-- 중앙 말풍선 안내 -->
+    <LinearLayout
+        android:id="@+id/bubbleLayout"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:background="@drawable/bubble_background"
+        android:layout_gravity="center"
+        android:visibility="visible"
+        android:elevation="8dp">
+
         <TextView
-            android:text="사용자 매뉴얼"
-            android:textSize="36sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="20dp"
+            android:id="@+id/bubbleTextView"
+            android:layout_weight="1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <!-- 각 버튼 (ID는 _manual 붙임) -->
-        <Button
-            android:id="@+id/findMentorButton_manual"
-            android:text="멘토 찾기"
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:backgroundTint="#444444"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"/>
+            android:text="사용자 메뉴얼 입니다.\n각 버튼을 클릭하면 각 버튼의 기능을 설명합니다."
+            android:textColor="#000000"
+            android:textSize="32sp"
+            android:layout_marginEnd="10dp" />
 
-        <Button
-            android:id="@+id/findMenteeButton_manual"
-            android:text="멘티 찾기"
-            android:layout_width="match_parent"
+        <ImageButton
+            android:id="@+id/closeBubbleButton"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:backgroundTint="#444444"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"/>
-
-        <Button
-            android:id="@+id/aiMentorButton_manual"
-            android:text="AI멘토에게 물어보기"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:backgroundTint="#444444"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"/>
-
-        <Button
-            android:id="@+id/manualButton_manual"
-            android:text="사용자 매뉴얼"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:backgroundTint="#444444"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"/>
-
-        <Button
-            android:id="@+id/customerServiceButton_manual"
-            android:text="고객서비스"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:backgroundTint="#444444"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"/>
-
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:background="@android:color/transparent"
+            android:contentDescription="말풍선 닫기 버튼" />
     </LinearLayout>
-</ScrollView>
+
+</FrameLayout>

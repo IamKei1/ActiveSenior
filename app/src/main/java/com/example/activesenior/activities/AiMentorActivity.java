@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.view.View;
 import android.widget.*;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +21,7 @@ import com.example.activesenior.adapters.ChatAdapter;
 import com.example.activesenior.models.ChatMessage;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.functions.FirebaseFunctions;
 
 import java.util.*;
@@ -36,6 +38,7 @@ public class AiMentorActivity extends AppCompatActivity {
     private List<ChatMessage> chatMessages;
     private FirebaseFunctions functions = FirebaseFunctions.getInstance();
     private Date lastMessageDate = null;
+    private TextView chatWatermarkTextView;
 
     private FusedLocationProviderClient fusedLocationClient;
     private double currentLat = 0.0;
@@ -50,6 +53,7 @@ public class AiMentorActivity extends AppCompatActivity {
         sendTextButton = findViewById(R.id.sendTextButton);
         voiceButton = findViewById(R.id.voiceButton);
         chatRecyclerView = findViewById(R.id.chatRecyclerView);
+        chatWatermarkTextView = findViewById(R.id.chatWatermarkTextView);
 
         chatMessages = new ArrayList<>();
         chatAdapter = new ChatAdapter(chatMessages);
@@ -58,6 +62,7 @@ public class AiMentorActivity extends AppCompatActivity {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         checkLocationPermissionAndFetch();
+        //chatWatermarkTextView.setVisibility(View.VISIBLE);
 
         sendTextButton.setOnClickListener(v -> {
             String input = inputEditText.getText().toString().trim();
@@ -93,15 +98,27 @@ public class AiMentorActivity extends AppCompatActivity {
 
     private void addMessage(String message, boolean isUser) {
         Date now = new Date();
+        String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String senderId = isUser ? currentUid : "AI";
+        String receiverId = isUser ? "AI" : currentUid;
+
+        // 날짜 헤더가 필요한 경우 추가
         if (lastMessageDate == null || !isSameDay(lastMessageDate, now)) {
             chatMessages.add(new ChatMessage("", false, now, true));
             lastMessageDate = now;
         }
 
-        chatMessages.add(new ChatMessage(message, isUser, now, false));
+        if (chatWatermarkTextView.getVisibility() == View.VISIBLE) {
+            chatWatermarkTextView.setVisibility(View.GONE);
+        }
+
+
+        ChatMessage chatMessage = new ChatMessage(message, isUser, now, false, senderId, receiverId);
+        chatMessages.add(chatMessage);
         chatAdapter.notifyItemInserted(chatMessages.size() - 1);
         chatRecyclerView.scrollToPosition(chatMessages.size() - 1);
     }
+
 
     private boolean isSameDay(Date d1, Date d2) {
         Calendar cal1 = Calendar.getInstance();
@@ -121,7 +138,11 @@ public class AiMentorActivity extends AppCompatActivity {
     }
 
     private boolean containsLocationKeyword(String message) {
-        return message.contains("근처") || message.contains("찾아줘") || message.contains("어디") || message.contains("가는 법");
+        return message.contains("근처") || message.contains("주변") ||
+                message.contains("어디") || message.contains("인근") ||
+                message.contains("근방") || message.contains("부근") ||
+                message.contains("가까운")
+                ;
     }
 
     private void sendToChatGPT(String question) {

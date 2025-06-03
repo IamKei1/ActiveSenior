@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -81,7 +82,7 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        String birthDate = String.format("%s-%02d-%02d", year, Integer.parseInt(month), Integer.parseInt(day));
+        String birthDate = String.format("%s%02d%02d", year, Integer.parseInt(month), Integer.parseInt(day));
 
         Calendar birthCal = Calendar.getInstance();
         try {
@@ -105,6 +106,10 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         int age = calculateAge(birthCal);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+        Calendar calendar = Calendar.getInstance();
+        String registerDay = simpleDateFormat.format(calendar.getTime());
+
 
         // Firebase Auth 회원가입
         mAuth.createUserWithEmailAndPassword(email, password)
@@ -119,11 +124,15 @@ public class RegisterActivity extends AppCompatActivity {
                             user.put("name", name);
                             user.put("gender", gender);
                             user.put("birthDate", birthDate);
-
+                            user.put("age", age);
                             user.put("email", email);
                             user.put("phone", phone);
                             user.put("role", role);
-//66666
+                            user.put("password", password);
+                            user.put("isAvailable", false);
+                            user.put("registerDate", registerDay);
+
+
                             db.collection("users").document(uid)
                                     .set(user)
                                     .addOnSuccessListener(unused -> {

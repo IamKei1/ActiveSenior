@@ -1,6 +1,7 @@
 package com.example.activesenior.activities;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -14,6 +15,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -42,9 +44,13 @@ import com.google.firebase.firestore.*;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FindMentorActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -307,35 +313,32 @@ public class FindMentorActivity extends AppCompatActivity implements OnMapReadyC
 
     private void loadMentorsAndMarkOnMap() {
         db.collection("users")
-                .whereEqualTo("role", "mentor")
+                .whereEqualTo("role", "멘토")
                 .whereEqualTo("isAvailable", true)
                 .get()
                 .addOnSuccessListener(querySnapshots -> {
                     mentorList.clear();
                     googleMap.clear(); // 기존 마커 및 원 제거
 
-                    // ✅ 1. 반경 원 그리기
+                    // 🔵 1. 반경 원 그리기
                     if (currentUserLocation != null) {
                         LatLng center = new LatLng(
                                 currentUserLocation.getLatitude(),
                                 currentUserLocation.getLongitude()
                         );
 
-                        if (radiusCircle != null) {
-                            radiusCircle.remove();
-                        }
+                        if (radiusCircle != null) radiusCircle.remove();
 
                         radiusCircle = googleMap.addCircle(new CircleOptions()
                                 .center(center)
-                                .radius(selectedRadius) // 미터 단위
+                                .radius(selectedRadius)
                                 .strokeColor(Color.parseColor("#4A90E2"))
-                                .fillColor(0x304A90E2) // 반투명 파란색
+                                .fillColor(0x304A90E2)
                                 .strokeWidth(2f));
                     }
 
-                    // ✅ 2. 멘토 마커 추가
+                    // 🟡 2. 멘토 마커 추가
                     int visibleMentorCount = 0;
-
                     for (DocumentSnapshot doc : querySnapshots) {
                         User mentor = doc.toObject(User.class);
                         mentor.setUid(doc.getId());
@@ -353,12 +356,10 @@ public class FindMentorActivity extends AppCompatActivity implements OnMapReadyC
 
                             LatLng mentorLatLng = new LatLng(loc.getLatitude(), loc.getLongitude());
                             float hue = (distance <= selectedRadius) ?
-                                    BitmapDescriptorFactory.HUE_YELLOW : // 노랑
-                                    BitmapDescriptorFactory.HUE_RED;    // 기본색
+                                    BitmapDescriptorFactory.HUE_YELLOW :
+                                    BitmapDescriptorFactory.HUE_RED;
 
-                            if (distance <= selectedRadius) {
-                                visibleMentorCount++;
-                            }
+                            if (distance <= selectedRadius) visibleMentorCount++;
 
                             googleMap.addMarker(new MarkerOptions()
                                     .position(mentorLatLng)
@@ -367,7 +368,7 @@ public class FindMentorActivity extends AppCompatActivity implements OnMapReadyC
                         }
                     }
 
-                    // ✅ 3. 반경 내 멘토 수 마커로 표시
+                    // 🟢 3. 내 위치에 반경 내 멘토 수 마커 표시
                     if (currentUserLocation != null && visibleMentorCount > 0) {
                         LatLng center = new LatLng(
                                 currentUserLocation.getLatitude(),
@@ -380,7 +381,37 @@ public class FindMentorActivity extends AppCompatActivity implements OnMapReadyC
                                 .title(visibleMentorCount + "명의 멘토가 반경 내에 있습니다."));
                     }
 
-                    // ✅ 4. 리스트 정렬 및 표시
+                    // 💬 4. 마커 클릭 시 다이얼로그 표시
+                    googleMap.setOnMarkerClickListener(marker -> {
+                        String name = marker.getTitle();
+
+                        // 내 위치 마커는 무시
+                        if (!name.contains("멘토") && !name.contains("명의")) return true;
+
+                        final User[] selectedMentor = {null};
+                        for (User mentor : mentorList) {
+                            if (mentor.getName().equals(name)) {
+                                selectedMentor[0] = mentor;
+                                break;
+                            }
+                        }
+
+                        if (selectedMentor[0] != null) {
+                            new AlertDialog.Builder(this)
+                                    .setTitle("멘토 정보")
+                                    .setMessage("이름: " + selectedMentor[0].getName() +
+                                            "\n거리: " + String.format("%.0f", selectedMentor[0].getDistance()) + "m")
+                                    .setPositiveButton("요청하기", (dialog, which) -> {
+                                        onMentorSelected(selectedMentor[0]);
+                                    })
+                                    .setNegativeButton("취소", null)
+                                    .show();
+                        }
+
+                        return true;
+                    });
+
+                    // 🔄 5. 리스트 정렬 및 UI 반영
                     calculateDistancesToMentors();
                 });
     }
@@ -388,16 +419,49 @@ public class FindMentorActivity extends AppCompatActivity implements OnMapReadyC
 
 
 
-    private void onMentorSelected(User mentor) {
-        Toast.makeText(this, mentor.getName() + "님에게 요청을 보냈습니다.", Toast.LENGTH_SHORT).show();
 
-        db.collection("users").document(currentUserUid)
-                .update("matchedUserId", mentor.getUid())
-                .addOnSuccessListener(unused ->
-                        db.collection("users").document(mentor.getUid())
-                                .update("matchedUserId", currentUserUid, "isAvailable", false)
-                );
+
+
+    private void onMentorSelected(User mentor) {
+        String currentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        // 1. 현재 사용자 정보 가져오기 (이름 포함)
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users").document(currentUserUid).get()
+                .addOnSuccessListener(doc -> {
+                    if (!doc.exists()) return;
+
+                    String currentUserName = doc.getString("name");
+
+                    // 2. 양쪽 사용자에 matchedUserId 설정 및 멘토 isAvailable = false 처리
+                    db.collection("users").document(currentUserUid)
+                            .update("matchedUserId", mentor.getUid());
+
+                    db.collection("users").document(mentor.getUid())
+                            .update("matchedUserId", currentUserUid, "isAvailable", false);
+
+                    // 3. ChatRoom 생성 정보 구성
+                    Map<String, Object> chatRoom = new HashMap<>();
+                    chatRoom.put("participants", Arrays.asList(currentUserUid, mentor.getUid()));
+                    chatRoom.put("participantName", mentor.getName());         // 내가 볼 상대 이름
+                    chatRoom.put("participantUid", mentor.getUid());
+                    chatRoom.put("lastMessage", "채팅이 시작되었습니다");
+                    chatRoom.put("lastTimestamp", new Date());
+
+                    // 4. Firestore에 chat_rooms 문서 생성
+                    db.collection("chat_rooms").add(chatRoom)
+                            .addOnSuccessListener(docRef -> {
+                                // 5. 생성된 채팅방으로 이동
+                                Intent intent = new Intent(FindMentorActivity.this, ChatActivity.class);
+                                intent.putExtra("roomId", docRef.getId());
+                                intent.putExtra("participantUid", mentor.getUid());
+                                intent.putExtra("participantName", mentor.getName());
+                                startActivity(intent);
+                            });
+                });
     }
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,

@@ -2,72 +2,120 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    >
 
     <LinearLayout
+
+        android:background="#FFFFFF"
         android:orientation="vertical"
         android:padding="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal">
 
-        <!-- 회원정보 타이틀 -->
         <TextView
+            android:layout_marginTop="100dp"
             android:id="@+id/titleTextView"
             android:text="회원정보"
             android:textSize="36sp"
             android:textStyle="bold"
             android:layout_marginBottom="10dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            />
 
-        <!-- 파란 박스 정보 영역 -->
-        <LinearLayout
-            android:orientation="vertical"
+        <!-- ✅ FrameLayout: 파란 박스 + Switch -->
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="36dp"
-            android:background="#5A9EFF"
             android:layout_marginBottom="20dp"
-            android:gravity="center"
             android:layout_marginTop="5dp"
-            android:layout_marginHorizontal="5dp"
-            android:elevation="4dp"
-            android:clipToOutline="true"
-            android:backgroundTint="#5A9EFF"
-            android:backgroundTintMode="src_in">
+            android:layout_marginHorizontal="5dp">
 
-            <TextView
-                android:id="@+id/temperatureTextView"
-                android:text="나의 온도 : 36.5℃"
-                android:textSize="28sp"
-                android:textColor="#FFFFFF"
-                android:layout_marginBottom="8dp"
+            <LinearLayout
+                android:background="@drawable/rounded_blue_box"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="36dp"
+                android:layout_marginBottom="20dp"
                 android:gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:elevation="4dp"
+                android:clipToOutline="true">
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/welcomeTextView"
-                android:text="홍길동님 환영합니다"
-                android:textSize="28sp"
+            <!-- 오른쪽 상단 Switch -->
+            <Switch
+                android:id="@+id/mentorToggleSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|top"
+                android:layout_margin="12dp"
+                android:text="멘토 활동 OFF"
                 android:textColor="#FFFFFF"
-                android:layout_marginBottom="8dp"
+                android:textSize="22sp"
+                android:minHeight="50dp"
+                android:switchMinWidth="65dp"
+                android:switchPadding="12dp"
+                android:trackTint="#06280A"
+                android:translationZ="7dp" />
+            <!-- 파란 박스 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_blue_box"
+                android:backgroundTintMode="src_in"
+                android:clipToOutline="true"
+                android:elevation="4dp"
                 android:gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:orientation="vertical"
+                android:padding="36dp"
+                >
+                <TextView
 
-            <TextView
-                android:id="@+id/statusTextView"
-                android:text="현재 멘토/멘티 활동\n [대기중 / 진행중]"
-                android:textSize="24sp"
-                android:textColor="#FFFFFF"
-                android:gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:text=""
+                    android:textSize="28sp" />
 
-        <!-- 버튼 5개 -->
+
+                <TextView
+                    android:id="@+id/temperatureTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:text="나의 온도 : 36.5℃"
+                    android:textColor="#FFFFFF"
+                    android:textSize="28sp" />
+
+                <TextView
+                    android:id="@+id/welcomeTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:text="홍길동님 환영합니다"
+                    android:textColor="#FFFFFF"
+                    android:textSize="28sp" />
+
+                <TextView
+                    android:id="@+id/statusTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="현재 멘토/멘티 활동\n [대기중]"
+                    android:textColor="#FFFFFF"
+                    android:textSize="24sp" />
+
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+        <!-- ✅ 버튼들 -->
         <Button
             android:id="@+id/findMentorButton"
             android:text="멘토 찾기"
@@ -99,6 +147,17 @@
             android:textSize="20sp"/>
 
         <Button
+            android:id="@+id/openChatButton"
+            android:text="멘토와 대화하기"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:backgroundTint="#444444"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"/>
+
+
+        <Button
             android:id="@+id/manualButton"
             android:text="사용자 매뉴얼"
             android:layout_width="match_parent"
@@ -117,6 +176,5 @@
             android:backgroundTint="#444444"
             android:textColor="#FFFFFF"
             android:textSize="20sp"/>
-
     </LinearLayout>
 </ScrollView>

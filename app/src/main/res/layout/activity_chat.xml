@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- 기존 채팅 화면 -->
+    <!-- 메인 콘텐츠 영역 -->
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -45,17 +45,17 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- 👇 중앙 워터마크 텍스트 -->
+    <!-- 👇 워터마크 텍스트: 중앙 고정 -->
     <TextView
         android:id="@+id/chatWatermarkTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="AI 멘토와 채팅"
+        android:text="멘토와 채팅"
         android:textColor="#CCCCCC"
         android:textSize="50sp"
-        android:alpha="0.5"
+        android:alpha="0.2"
         android:padding="10dp"
         android:background="@null"
-        android:elevation="1dp"/>
+        />
 </FrameLayout>
