@@ -35,7 +35,7 @@
             android:hint="내용"
             android:textSize="24sp"
             android:inputType="textMultiLine"
-            android:lines="10"
+            android:lines="8"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
@@ -49,9 +49,13 @@
         <Button
             android:id="@+id/btnSendSuggestion"
             android:text="보내기"
+            android:textSize="24sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"/>
+            android:backgroundTint="#2668B3"
+            android:layout_marginBottom="30dp"/>
+
+        <include layout="@layout/back_button"/>
 
     </LinearLayout>
 </ScrollView>

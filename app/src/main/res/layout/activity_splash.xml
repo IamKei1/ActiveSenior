@@ -8,7 +8,7 @@
         android:id="@+id/logoImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#5071f5"
+        android:background="#3e61dd"
         android:layout_centerInParent="true"
-        android:src="@drawable/ic_app_logo" /> <!-- 앱 로고 이미지 -->
+        android:src="@drawable/logo_splash" /> <!-- 앱 로고 이미지 -->
 </RelativeLayout>

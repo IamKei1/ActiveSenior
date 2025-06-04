@@ -36,6 +36,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         btnChangePassword = findViewById(R.id.btnChangePassword);
 
         btnChangePassword.setOnClickListener(v -> changePassword());
+        findViewById(R.id.backButton).setOnClickListener(v -> onBackPressed());
     }
 
     private void changePassword() {

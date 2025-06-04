@@ -33,7 +33,6 @@ public class RegisterActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // UI 연결
         nameEditText = findViewById(R.id.nameEditText);
         birthYearEditText = findViewById(R.id.birthYearEditText);
         birthMonthEditText = findViewById(R.id.birthMonthEditText);
@@ -47,6 +46,7 @@ public class RegisterActivity extends AppCompatActivity {
         registerButton = findViewById(R.id.registerButton);
 
         registerButton.setOnClickListener(v -> createUser());
+        findViewById(R.id.backButton).setOnClickListener(v -> onBackPressed());
     }
 
     private void createUser() {

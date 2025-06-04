@@ -39,6 +39,7 @@ public class SuggestionActivity extends AppCompatActivity {
         btnSendSuggestion = findViewById(R.id.btnSendSuggestion);
 
         btnSendSuggestion.setOnClickListener(v -> sendSuggestion());
+        findViewById(R.id.backButton).setOnClickListener(v -> onBackPressed());
     }
 
     private void sendSuggestion() {

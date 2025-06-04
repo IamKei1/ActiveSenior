@@ -36,6 +36,18 @@ public class CustomerServiceActivity extends AppCompatActivity {
 
         findViewById(R.id.btnGoSuggestion).setOnClickListener(v ->
                 startActivity(new Intent(this, SuggestionActivity.class)));
+
+        findViewById(R.id.backButton).setOnClickListener(v -> onBackPressed());
+
+        findViewById(R.id.btnLogOut).setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+
+            Intent intent = new Intent(CustomerServiceActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // 백스택 제거
+            startActivity(intent);
+            finish();
+        });
+
     }
 }
 

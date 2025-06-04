@@ -3,7 +3,11 @@
     <style name="Base.Theme.ActiveSenior" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:statusBarColor">#5A9EFF</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="Theme.ActiveSenior" parent="Base.Theme.ActiveSenior" />
+
+
 </resources>

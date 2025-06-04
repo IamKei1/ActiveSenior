@@ -1,52 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
     <LinearLayout
-
-        android:background="#FFFFFF"
         android:orientation="vertical"
         android:padding="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal">
 
+        <!-- 앱 타이틀 -->
         <TextView
-            android:layout_marginTop="100dp"
             android:id="@+id/titleTextView"
-            android:text="회원정보"
-            android:textSize="36sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            />
+            android:text=" Active Senior"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            android:textColor="#3A5EE0"
+            android:drawableStart="@drawable/logo3_2"
+            android:layout_marginBottom="10dp" />
 
-        <!-- ✅ FrameLayout: 파란 박스 + Switch -->
+        <!-- 파란 정보 박스 + 스위치 -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
             android:layout_marginTop="5dp"
+            android:layout_marginBottom="20dp"
             android:layout_marginHorizontal="5dp">
 
             <LinearLayout
-                android:background="@drawable/rounded_blue_box"
-                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/rounded_blue_box"
                 android:padding="36dp"
-                android:layout_marginBottom="20dp"
                 android:gravity="center"
                 android:elevation="4dp"
-                android:clipToOutline="true">
-            </LinearLayout>
+                android:clipToOutline="true" />
 
-            <!-- 오른쪽 상단 Switch -->
             <Switch
-                android:id="@+id/mentorToggleSwitch"
+                android:id="@+id/userToggleSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end|top"
@@ -59,122 +54,127 @@
                 android:switchPadding="12dp"
                 android:trackTint="#06280A"
                 android:translationZ="7dp" />
-            <!-- 파란 박스 -->
+
             <LinearLayout
+                android:id="@+id/infoBoxLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/rounded_blue_box"
-                android:backgroundTintMode="src_in"
-                android:clipToOutline="true"
-                android:elevation="4dp"
-                android:gravity="center"
                 android:orientation="vertical"
+                android:background="#5A9EFF"
                 android:padding="36dp"
-                >
-                <TextView
+                android:gravity="center"
+                android:elevation="4dp"
+                android:clipToOutline="true">
 
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:gravity="center"
                     android:text=""
-                    android:textSize="28sp" />
-
+                    android:textSize="28sp"
+                    android:gravity="center"
+                    android:layout_marginBottom="8dp" />
 
                 <TextView
                     android:id="@+id/temperatureTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:gravity="center"
                     android:text="나의 온도 : 36.5℃"
+                    android:textSize="28sp"
                     android:textColor="#FFFFFF"
-                    android:textSize="28sp" />
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center" />
 
                 <TextView
                     android:id="@+id/welcomeTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:gravity="center"
                     android:text="홍길동님 환영합니다"
+                    android:textSize="28sp"
                     android:textColor="#FFFFFF"
-                    android:textSize="28sp" />
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center" />
 
                 <TextView
                     android:id="@+id/statusTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:text="현재 멘토/멘티 활동\n [대기중]"
+                    android:textSize="24sp"
                     android:textColor="#FFFFFF"
-                    android:textSize="24sp" />
-
-
+                    android:gravity="center" />
             </LinearLayout>
-
         </FrameLayout>
 
-        <!-- ✅ 버튼들 -->
-        <Button
-            android:id="@+id/findMentorButton"
-            android:text="멘토 찾기"
+        <!-- 도움 안내 텍스트 -->
+        <TextView
+            android:id="@+id/approvalGuideTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:backgroundTint="#444444"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"/>
+            android:text="멘토에게 도움을 받으셨나요?\n도움 완료한 항목을 눌러주세요."
+            android:textSize="22sp"
+            android:textColor="#000000"
+            android:gravity="center"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"/>
 
-        <Button
-            android:id="@+id/findMenteeButton"
+        <!-- 🔷 2x3 정사각형 버튼 그리드 -->
+        <GridLayout
+            android:id="@+id/approvalButtonGrid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:backgroundTint="#444444"
-            android:text="멘티 찾기"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"/>
+            android:columnCount="2"
+            android:alignmentMode="alignMargins"
+            android:useDefaultMargins="true"
+            android:padding="8dp"
+            android:layout_marginBottom="20dp"
+            >
 
-        <Button
-            android:id="@+id/aiMentorButton"
-            android:text="AI멘토에게 물어보기"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:backgroundTint="#444444"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"/>
+            <androidx.appcompat.widget.AppCompatButton
+                style="@style/ButtonStyle"
+                android:id="@+id/findPersonButton"
+                android:text="멘토 찾기"
+                android:background="@drawable/rounded_button_blue"
+                android:textSize="20sp"/>
 
-        <Button
-            android:id="@+id/openChatButton"
-            android:text="멘토와 대화하기"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:backgroundTint="#444444"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"/>
+            <androidx.appcompat.widget.AppCompatButton
+                style="@style/ButtonStyle"
+                android:id="@+id/aiMentorButton"
+                android:text="AI멘토에게 물어보기"
+                android:background="@drawable/rounded_button_blue"
+                android:textSize="20sp"/>
+            <androidx.appcompat.widget.AppCompatButton
+                style="@style/ButtonStyle"
+                android:id="@+id/openChatButton"
+                android:text="멘토와 대화하기"
+                android:background="@drawable/rounded_button_green"
+                android:textSize="20sp"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                style="@style/ButtonStyle"
+                android:id="@+id/approveHelpButton"
+                android:text="도움 받았어요 ✔️"
+                android:textSize="20sp"
+                android:background="@drawable/rounded_button_green"
+                />
+
+            <androidx.appcompat.widget.AppCompatButton
+                style="@style/ButtonStyle"
+                android:id="@+id/manualButton"
+                android:text="사용자 매뉴얼"
+                android:background="@drawable/rounded_button_yellow"
+                android:textSize="20sp"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                style="@style/ButtonStyle"
+                android:id="@+id/customerServiceButton"
+                android:text="고객서비스"
+                android:background="@drawable/rounded_button_yellow"
+                android:textSize="20sp"/>
 
 
-        <Button
-            android:id="@+id/manualButton"
-            android:text="사용자 매뉴얼"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:backgroundTint="#444444"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"/>
+        </GridLayout>
 
-        <Button
-            android:id="@+id/customerServiceButton"
-            android:text="고객서비스"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:backgroundTint="#444444"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"/>
+
     </LinearLayout>
 </ScrollView>

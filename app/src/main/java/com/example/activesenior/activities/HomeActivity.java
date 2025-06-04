@@ -1,28 +1,30 @@
 package com.example.activesenior.activities;
 
 import android.Manifest;
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
-
 import android.os.Handler;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
-import android.content.Intent;
-import android.widget.Toast;
 
 import com.example.activesenior.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,27 +34,32 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.security.MessageDigest;
 
+import android.os.Vibrator;
+import android.os.VibratorManager;
+import android.os.VibrationEffect;
+
 public class HomeActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
     private TextView welcomeTextView, temperatureTextView, statusTextView;
-    private Button findMentorButton, findMenteeButton;
+    private Button findPersonButton;
     private Button aiMentorButton, manualButton, customerServiceButton;
     private Button openChatButton;
 
-    private Switch mentorToggleSwitch;
+    private Switch userToggleSwitch;
     private Handler handler = new Handler();
     private Toast currentToast;
+
+    private LinearLayout infoBoxLayout;
+    private ValueAnimator gradientAnimator;
 
     @RequiresApi(api = Build.VERSION_CODES.P)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
-
 
         try {
             Signature[] sigs = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_SIGNING_CERTIFICATES).signingInfo.getApkContentsSigners();
@@ -66,7 +73,6 @@ public class HomeActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        // 알림 권한 요청 (Android 13 이상 대상)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
                     != PackageManager.PERMISSION_GRANTED) {
@@ -78,74 +84,34 @@ public class HomeActivity extends AppCompatActivity {
             }
         }
 
-
-
-
-
-        // Switch 연결
-        mentorToggleSwitch = findViewById(R.id.mentorToggleSwitch);
-        mentorToggleSwitch.setVisibility(View.GONE); // 기본 숨김
-
-
-
-        // Firebase 인스턴스
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-
-
-
-        // UI 연결
         welcomeTextView = findViewById(R.id.welcomeTextView);
         temperatureTextView = findViewById(R.id.temperatureTextView);
         statusTextView = findViewById(R.id.statusTextView);
 
-        findMentorButton = findViewById(R.id.findMentorButton);
-        findMenteeButton = findViewById(R.id.findMenteeButton);
+        findPersonButton = findViewById(R.id.findPersonButton);
         aiMentorButton = findViewById(R.id.aiMentorButton);
         openChatButton = findViewById(R.id.openChatButton);
         manualButton = findViewById(R.id.manualButton);
         customerServiceButton = findViewById(R.id.customerServiceButton);
 
-        // 버튼 초기 숨김
-        findMentorButton.setVisibility(View.GONE);
-        findMenteeButton.setVisibility(View.GONE);
-        manualButton.setOnClickListener(v -> {
-            Intent intent = new Intent(HomeActivity.this, ManualActivity.class);
-            startActivity(intent);
-        });
 
 
-        // 멘토찾기
-        findMentorButton.setOnClickListener(v -> {
-            Intent intent = new Intent(HomeActivity.this, FindMentorActivity.class);
-            startActivity(intent);
-        });
+
+        userToggleSwitch = findViewById(R.id.userToggleSwitch);
+        infoBoxLayout = findViewById(R.id.infoBoxLayout);
+        infoBoxLayout.setBackgroundResource(R.drawable.rounded_blue_box);
+
+        manualButton.setOnClickListener(v -> startActivity(new Intent(this, ManualActivity.class)));
+        findPersonButton.setOnClickListener(v -> startActivity(new Intent(this, FindPersonActivity.class)));
+        openChatButton.setOnClickListener(v -> startActivity(new Intent(this, ChatRoomActivity.class)));
+        aiMentorButton.setOnClickListener(v -> startActivity(new Intent(this, AiChatRoomActivity.class)));
+        customerServiceButton.setOnClickListener(v -> startActivity(new Intent(this, CustomerServiceActivity.class)));
 
 
-        manualButton.setOnClickListener(v -> {
-            Intent intent = new Intent(HomeActivity.this, ManualActivity.class);
-            startActivity(intent);
-        });
 
-
-        openChatButton.setOnClickListener(v -> {
-            Intent intent = new Intent(HomeActivity.this, ChatRoomActivity.class);
-            startActivity(intent);
-        });
-
-
-        // AI멘토에게 물어보기
-        aiMentorButton.setOnClickListener(v -> {
-            Intent intent = new Intent(HomeActivity.this, AiMentorActivity.class);
-            startActivity(intent);
-        });
-
-        customerServiceButton.setOnClickListener(v -> {
-            Intent intent = new Intent(HomeActivity.this, CustomerServiceActivity.class);
-            startActivity(intent);
-        });
-        // 사용자 정보 로드
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             String uid = currentUser.getUid();
@@ -153,13 +119,9 @@ public class HomeActivity extends AppCompatActivity {
             FirebaseMessaging.getInstance().getToken()
                     .addOnSuccessListener(token -> {
                         Log.d("FCM_CHECK", "현재 기기 토큰: " + token);
-                        // 🔐 FCM 토큰 저장
                         db.collection("users").document(uid)
                                 .update("fcmToken", token)
                                 .addOnSuccessListener(unused -> {
-                                    Log.d("FCM", "🔐 로그인 후 토큰 저장 완료");
-
-                                    // ✅ 사용자 정보 불러오기
                                     db.collection("users").document(uid).get()
                                             .addOnSuccessListener(doc -> {
                                                 if (!doc.exists()) return;
@@ -172,39 +134,9 @@ public class HomeActivity extends AppCompatActivity {
                                                 welcomeTextView.setText(name + "님 환영합니다");
                                                 temperatureTextView.setText("나의 온도 : " + temp);
 
-                                                switch (role) {
-                                                    case "멘티":
-                                                        findMentorButton.setVisibility(View.VISIBLE);
-                                                        mentorToggleSwitch.setVisibility(View.GONE);
-                                                        break;
-
-                                                    case "멘토":
-                                                        findMenteeButton.setVisibility(View.VISIBLE);
-                                                        mentorToggleSwitch.setVisibility(View.VISIBLE);
-
-                                                        if (Boolean.TRUE.equals(isAvailable)) {
-                                                            mentorToggleSwitch.setChecked(true);
-                                                            mentorToggleSwitch.setText("멘토 활동 ON");
-                                                        }
-
-                                                        mentorToggleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                                                            db.collection("users").document(uid)
-                                                                    .update("isAvailable", isChecked)
-                                                                    .addOnSuccessListener(unused2 -> {
-                                                                        mentorToggleSwitch.setText(role + " 활동 " + (isChecked ? "ON" : "OFF"));
-                                                                        statusTextView.setText("현재 " + role + " 활동\n [" + (isChecked ? "진행중" : "대기중") + "]");
-
-                                                                        if (isChecked) {
-                                                                            if (currentToast != null) currentToast.cancel();
-                                                                            currentToast = Toast.makeText(this, "멘토 활동을 시작합니다", Toast.LENGTH_SHORT);
-                                                                            currentToast.show();
-                                                                            handler.postDelayed(() -> {
-                                                                                if (currentToast != null) currentToast.cancel();
-                                                                            }, 3000);
-                                                                        }
-                                                                    });
-                                                        });
-                                                        break;
+                                                if (role != null) {
+                                                    findPersonButton.setText(role.equals("멘토") ? "멘티 찾기" : "멘토 찾기");
+                                                    initializeUserToggle(role, isAvailable, uid);
                                                 }
                                             })
                                             .addOnFailureListener(e -> {
@@ -216,9 +148,8 @@ public class HomeActivity extends AppCompatActivity {
                     })
                     .addOnFailureListener(e -> Log.e("FCM", "❌ 토큰 가져오기 실패: " + e.getMessage()));
         }
-
     }
-    // 🔔 알림 권한 요청 결과 처리
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -233,5 +164,78 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    private void initializeUserToggle(String role, Boolean isAvailable, String uid) {
+        String label = role.equals("멘토") ? "멘토" : "멘티";
+        boolean active = Boolean.TRUE.equals(isAvailable);
+        userToggleSwitch.setChecked(active);
+        userToggleSwitch.setText(label + " 활동 " + (active ? "ON" : "OFF"));
+        statusTextView.setText("현재 " + label + " 활동\n [" + (active ? "진행중" : "대기중") + "]");
 
+        if (active) startGradientAnimation();
+        else stopGradientAnimation();
+
+        userToggleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            db.collection("users").document(uid)
+                    .update("isAvailable", isChecked)
+                    .addOnSuccessListener(unused -> {
+                        userToggleSwitch.setText(label + " 활동 " + (isChecked ? "ON" : "OFF"));
+                        statusTextView.setText("현재 " + label + " 활동\n [" + (isChecked ? "진행중" : "대기중") + "]");
+
+                        if (isChecked) startGradientAnimation();
+                        else stopGradientAnimation();
+
+                        if (currentToast != null) currentToast.cancel();
+                        String message = isChecked ? label + " 활동을 시작합니다" : label + " 활동을 종료합니다";
+                        currentToast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+                        currentToast.show();
+
+                        vibrate();
+
+                        handler.postDelayed(() -> {
+                            if (currentToast != null) currentToast.cancel();
+                        }, 3000);
+                    });
+        });
+    }
+
+    private void startGradientAnimation() {
+        GradientDrawable drawable = (GradientDrawable) ContextCompat.getDrawable(this, R.drawable.rounded_gradient_box).mutate();
+        infoBoxLayout.setBackground(drawable);
+
+        int colorStart = ContextCompat.getColor(this, R.color.light_blue);
+        int colorEnd = ContextCompat.getColor(this, R.color.purple_200);
+
+        gradientAnimator = ValueAnimator.ofFloat(0, 1);
+        gradientAnimator.setDuration(1500);
+        gradientAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        gradientAnimator.setRepeatMode(ValueAnimator.REVERSE);
+
+        gradientAnimator.addUpdateListener(animation -> {
+            float fraction = animation.getAnimatedFraction();
+            int blended = (Integer) new ArgbEvaluator().evaluate(fraction, colorStart, colorEnd);
+            drawable.setColors(new int[]{blended, colorStart});
+        });
+
+        gradientAnimator.start();
+    }
+
+    private void stopGradientAnimation() {
+        if (gradientAnimator != null && gradientAnimator.isRunning()) {
+            gradientAnimator.cancel();
+        }
+        infoBoxLayout.setBackgroundResource(R.drawable.rounded_blue_box);
+    }
+
+    private void vibrate() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            VibratorManager vibratorManager = (VibratorManager) getSystemService(VIBRATOR_MANAGER_SERVICE);
+            Vibrator vibrator = vibratorManager.getDefaultVibrator();
+            vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+            if (vibrator != null && vibrator.hasVibrator()) {
+                vibrator.vibrate(200);
+            }
+        }
+    }
 }

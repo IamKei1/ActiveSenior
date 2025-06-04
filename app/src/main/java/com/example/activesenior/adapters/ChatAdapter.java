@@ -106,7 +106,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             if (message.getReadBy() != null && message.getReadBy().contains(message.getReceiverId())) {
                 readStatusTextView.setText("읽음");
             } else {
-                readStatusTextView.setText("안읽음");
+                readStatusTextView.setText(" ");
             }
 
             readStatusTextView.setVisibility(View.VISIBLE);

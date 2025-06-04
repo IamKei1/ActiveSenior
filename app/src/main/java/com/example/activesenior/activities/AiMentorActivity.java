@@ -22,6 +22,8 @@ import com.example.activesenior.models.ChatMessage;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.functions.FirebaseFunctions;
 
 import java.util.*;
@@ -49,6 +51,8 @@ public class AiMentorActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ai_mentor);
+
+
 
         inputEditText = findViewById(R.id.inputEditText);
         sendTextButton = findViewById(R.id.sendTextButton);
@@ -82,7 +86,11 @@ public class AiMentorActivity extends AppCompatActivity {
             intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "질문을 말씀해주세요");
             startActivityForResult(intent, VOICE_REQUEST_CODE);
         });
+
+        loadChatHistory();
     }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -104,8 +112,7 @@ public class AiMentorActivity extends AppCompatActivity {
         String senderId = isUser ? currentUid : "AI";
         String receiverId = isUser ? "AI" : currentUid;
 
-        // 날짜 헤더가 필요한 경우 추가
-        // 날짜 헤더가 필요한 경우 추가
+
         if (lastMessageDate == null || !isSameDay(lastMessageDate, now)) {
             chatMessages.add(new ChatMessage("", now, true, senderId, receiverId));
             lastMessageDate = now;
@@ -122,7 +129,49 @@ public class AiMentorActivity extends AppCompatActivity {
         chatAdapter.notifyItemInserted(chatMessages.size() - 1);
         chatRecyclerView.scrollToPosition(chatMessages.size() - 1);
 
+        saveMessageToFirestore(chatMessage); // 저장 추가
+
     }
+
+    private void saveMessageToFirestore(ChatMessage message) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String roomId = "ai_" + currentUserId;
+
+        db.collection("ai_chat_rooms")
+                .document(currentUserId)
+                .collection("messages")
+                .add(message)
+                .addOnSuccessListener(docRef -> {
+                    // 저장 성공 로그 (필요시)
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "메시지 저장 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void loadChatHistory() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String roomId = "ai_" + currentUserId;
+
+        db.collection("ai_chat_rooms")
+                .document(currentUserId)
+                .collection("messages")
+                .orderBy("timestamp")
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    chatMessages.clear();
+                    for (DocumentSnapshot doc : querySnapshot) {
+                        ChatMessage msg = doc.toObject(ChatMessage.class);
+                        chatMessages.add(msg);
+                    }
+                    chatAdapter.notifyDataSetChanged();
+                    chatRecyclerView.scrollToPosition(chatMessages.size() - 1);
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "채팅 불러오기 실패", Toast.LENGTH_SHORT).show();
+                });
+    }
+
 
 
     private boolean isSameDay(Date d1, Date d2) {

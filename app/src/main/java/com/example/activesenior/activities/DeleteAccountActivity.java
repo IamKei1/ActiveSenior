@@ -40,6 +40,7 @@ public class DeleteAccountActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etDeletePassword);
 
         findViewById(R.id.btnDeleteAccount).setOnClickListener(v -> confirmAndDelete());
+        findViewById(R.id.backButton).setOnClickListener(v -> onBackPressed());
     }
 
     private void confirmAndDelete() {

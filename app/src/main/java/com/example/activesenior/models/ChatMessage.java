@@ -11,6 +11,8 @@ public class ChatMessage {
     private String receiverId;
     private List<String> readBy;
 
+    public ChatMessage() {}
+
 
     // 기존 생성자
     public ChatMessage(String message, Date timestamp, boolean isDateHeader) {

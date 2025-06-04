@@ -42,6 +42,8 @@
                 >
 
 
+
+
                 <TextView
 
                     android:layout_width="wrap_content"
@@ -71,61 +73,61 @@
             </LinearLayout>
 
             <!-- 각 버튼 -->
-            <Button
-                android:id="@+id/findMentorButton_manual"
-                android:text="멘토 찾기"
+            <GridLayout
+                android:id="@+id/approvalButtonGrid"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:backgroundTint="#444444"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:contentDescription="멘토 찾기 버튼. 멘토를 찾는 기능입니다." />
+                android:columnCount="2"
+                android:alignmentMode="alignMargins"
+                android:useDefaultMargins="true"
+                android:padding="8dp"
+                android:layout_marginBottom="20dp"
+                >
 
-            <Button
-                android:id="@+id/findMenteeButton_manual"
-                android:text="멘티 찾기"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:backgroundTint="#444444"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:contentDescription="멘티 찾기 버튼. 멘티를 찾는 기능입니다." />
+                <androidx.appcompat.widget.AppCompatButton
+                    style="@style/ButtonStyle"
+                    android:id="@+id/findMentorButton_manual"
+                    android:text="멘토 찾기"
+                    android:background="@drawable/rounded_button_blue"
+                    android:textSize="20sp"/>
 
-            <Button
-                android:id="@+id/aiMentorButton_manual"
-                android:text="AI멘토에게 물어보기"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:backgroundTint="#444444"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:contentDescription="AI 멘토에게 질문할 수 있는 기능입니다." />
+                <androidx.appcompat.widget.AppCompatButton
+                    style="@style/ButtonStyle"
+                    android:id="@+id/aiMentorButton_manual"
+                    android:text="AI멘토에게 물어보기"
+                    android:background="@drawable/rounded_button_blue"
+                    android:textSize="20sp"/>
+                <androidx.appcompat.widget.AppCompatButton
+                    style="@style/ButtonStyle"
+                    android:id="@+id/openChatButton_manual"
+                    android:text="멘토와 대화하기"
+                    android:background="@drawable/rounded_button_green"
+                    android:textSize="20sp"/>
 
-            <Button
-                android:id="@+id/manualButton_manual"
-                android:text="사용자 매뉴얼"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:backgroundTint="#444444"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:enabled="false"
-                android:contentDescription="현재 사용자 매뉴얼 화면입니다." />
+                <androidx.appcompat.widget.AppCompatButton
+                    style="@style/ButtonStyle"
+                    android:id="@+id/approveHelpButton_manual"
+                    android:text="도움 받았어요 ✔️"
+                    android:textSize="20sp"
+                    android:background="@drawable/rounded_button_green"
+                    />
 
-            <Button
-                android:id="@+id/customerServiceButton_manual"
-                android:text="고객서비스"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:backgroundTint="#444444"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:contentDescription="고객 서비스 센터로 이동하는 버튼입니다." />
+                <androidx.appcompat.widget.AppCompatButton
+                    style="@style/ButtonStyle"
+                    android:id="@+id/manualButton_manual"
+                    android:text="사용자 매뉴얼"
+                    android:background="@drawable/rounded_button_yellow"
+                    android:textSize="20sp"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    style="@style/ButtonStyle"
+                    android:id="@+id/customerServiceButton_manual"
+                    android:text="고객서비스"
+                    android:background="@drawable/rounded_button_yellow"
+                    android:textSize="20sp"/>
+
+
+            </GridLayout>
 
         </LinearLayout>
     </ScrollView>

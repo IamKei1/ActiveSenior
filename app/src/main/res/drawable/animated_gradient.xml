@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gradient xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/animatedGradient"
+    android:startColor="#5A9EFF"
+    android:endColor="#A1C4FD"
+    android:angle="45"
+    android:type="linear" />

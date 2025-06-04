@@ -31,10 +31,11 @@ public class ManualActivity extends AppCompatActivity {
 
         // 버튼 연결
         Button mentorBtn = findViewById(R.id.findMentorButton_manual);
-        Button menteeBtn = findViewById(R.id.findMenteeButton_manual);
         Button aiMentorBtn = findViewById(R.id.aiMentorButton_manual);
         Button manualBtn = findViewById(R.id.manualButton_manual);
         Button csBtn = findViewById(R.id.customerServiceButton_manual);
+        Button ahBtn = findViewById(R.id.approveHelpButton_manual);
+        Button ocbtn = findViewById(R.id.openChatButton_manual);
 
         dimOverlay.setVisibility(View.VISIBLE);
 
@@ -43,10 +44,12 @@ public class ManualActivity extends AppCompatActivity {
 
         // 버튼 클릭 시 설명창 표시
         mentorBtn.setOnClickListener(v -> showBubble("‘멘토 찾기’ 버튼은\n 나에게 맞는 멘토를 찾을 수 있습니다."));
-        menteeBtn.setOnClickListener(v -> showBubble("‘멘티 찾기’ 버튼은\n 도움을 필요로 하는 멘티를 찾는 기능입니다."));
         aiMentorBtn.setOnClickListener(v -> showBubble("‘AI 멘토’ 버튼은\nAI 멘토에게 질문하여 조언을 받을 수 있습니다."));
         manualBtn.setOnClickListener(v -> showBubble("사용자 매뉴얼입니다. 버튼 설명을 볼 수 있습니다."));
         csBtn.setOnClickListener(v -> showBubble("회원정보 수정\n회원탈퇴\n건의사항을 이용할 수 있습니다."));
+        ahBtn.setOnClickListener(v -> showBubble("멘토-멘티와 매칭이 끝나고 활동이 끝났을 때 활동종료 하는 버튼입니다."));
+        ocbtn.setOnClickListener(v -> showBubble("멘토-멘티와 대화를 서로 주고받는 버튼입니다."));
+
     }
 
     private void showBubble(String message) {
