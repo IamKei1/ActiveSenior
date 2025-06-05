@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.activesenior.R;
+import com.example.activesenior.utils.NavigationHelper;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
@@ -23,34 +24,32 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CustomerServiceActivity extends AppCompatActivity {
+
+    private Button btnGoPointShop;
+    private Button btnGoSuggestion;
+    private Button btnGoChangePassword;
+    private Button btnGoDeleteAccount;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer_service);
 
-        findViewById(R.id.btnGoPointShop).setOnClickListener(v ->
-                startActivity(new Intent(this, PointShopActivity.class)));
+        btnGoPointShop = findViewById(R.id.btnGoPointShop);
+        btnGoSuggestion = findViewById(R.id.btnGoSuggestion);
+        btnGoChangePassword = findViewById(R.id.btnGoChangePassword);
+        btnGoDeleteAccount = findViewById(R.id.btnGoDeleteAccount);
 
-        findViewById(R.id.btnGoSuggestion).setOnClickListener(v ->
-                startActivity(new Intent(this, SuggestionActivity.class)));
-
-        findViewById(R.id.btnGoChangePassword).setOnClickListener(v ->
-                startActivity(new Intent(this, ChangePasswordActivity.class)));
-
-        findViewById(R.id.btnGoDeleteAccount).setOnClickListener(v ->
-                startActivity(new Intent(this, DeleteAccountActivity.class)));
-
+        NavigationHelper.setupConfirmNavigation(this,btnGoPointShop, PointShopActivity.class);
+        NavigationHelper.setupConfirmNavigation(this,btnGoSuggestion, SuggestionActivity.class);
+        NavigationHelper.setupConfirmNavigation(this,btnGoChangePassword, ChangePasswordActivity.class);
+        NavigationHelper.setupConfirmNavigation(this,btnGoDeleteAccount, DeleteAccountActivity.class);
 
 
         findViewById(R.id.backButton).setOnClickListener(v -> onBackPressed());
 
         findViewById(R.id.btnLogOut).setOnClickListener(v -> {
-            FirebaseAuth.getInstance().signOut();
-
-            Intent intent = new Intent(CustomerServiceActivity.this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // 백스택 제거
-            startActivity(intent);
-            finish();
+            NavigationHelper.showConfirmLogout(this);
         });
 
     }

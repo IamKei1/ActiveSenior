@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.activesenior.R;
 import com.example.activesenior.models.User;
+import com.example.activesenior.utils.DialogHelper;
 
 import java.util.List;
 
@@ -46,7 +47,16 @@ public class MentorAdapter extends RecyclerView.Adapter<MentorAdapter.MentorView
         holder.nameTextView.setText(mentor.getName());
         holder.roleTextView.setText("역할: " + mentor.getRole());
 
-        holder.requestButton.setOnClickListener(v -> listener.onMentorClick(mentor));
+        holder.requestButton.setOnClickListener(v -> {
+            String message = "[" + mentor.getName() + "] 멘토에게 요청하시겠습니까?";
+
+            DialogHelper.showConfirmDialog(
+                    v.getContext(),
+                    message,
+                    () -> listener.onMentorClick(mentor)
+            );
+        });
+
         holder.distanceTextView.setText(String.format("거리: %.0f m", mentor.getDistance()));
 
     }

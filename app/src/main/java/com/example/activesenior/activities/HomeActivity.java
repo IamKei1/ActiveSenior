@@ -33,17 +33,21 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.security.MessageDigest;
+import java.util.List;
 
 import android.os.Vibrator;
 import android.os.VibratorManager;
 import android.os.VibrationEffect;
+
+import com.example.activesenior.dialogs.ConfirmDialog;
+import com.example.activesenior.utils.NavigationHelper;
 
 public class HomeActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
-    private TextView welcomeTextView, temperatureTextView, statusTextView;
+    private TextView welcomeTextView, pointTextView, statusTextView;
     private Button findPersonButton;
     private Button aiMentorButton, manualButton, customerServiceButton;
     private Button openChatButton;
@@ -90,7 +94,7 @@ public class HomeActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         welcomeTextView = findViewById(R.id.welcomeTextView);
-        temperatureTextView = findViewById(R.id.temperatureTextView);
+        pointTextView = findViewById(R.id.pointTextView);
         statusTextView = findViewById(R.id.statusTextView);
 
         findPersonButton = findViewById(R.id.findPersonButton);
@@ -106,11 +110,14 @@ public class HomeActivity extends AppCompatActivity {
         infoBoxLayout = findViewById(R.id.infoBoxLayout);
         infoBoxLayout.setBackgroundResource(R.drawable.rounded_blue_box);
 
-        manualButton.setOnClickListener(v -> startActivity(new Intent(this, ManualActivity.class)));
-        findPersonButton.setOnClickListener(v -> startActivity(new Intent(this, FindPersonActivity.class)));
-        openChatButton.setOnClickListener(v -> startActivity(new Intent(this, ChatRoomActivity.class)));
-        aiMentorButton.setOnClickListener(v -> startActivity(new Intent(this, AiChatRoomActivity.class)));
-        customerServiceButton.setOnClickListener(v -> startActivity(new Intent(this, CustomerServiceActivity.class)));
+
+        NavigationHelper.setupConfirmNavigation(this, manualButton, ManualActivity.class);
+        NavigationHelper.setupConfirmNavigation(this, findPersonButton, FindPersonActivity.class);
+        NavigationHelper.setupConfirmNavigation(this, openChatButton, ChatRoomActivity.class);
+        NavigationHelper.setupConfirmNavigation(this, aiMentorButton, AiChatRoomActivity.class);
+        NavigationHelper.setupConfirmNavigation(this, customerServiceButton, CustomerServiceActivity.class);
+
+
 
 
 
@@ -131,10 +138,19 @@ public class HomeActivity extends AppCompatActivity {
                                                 String name = doc.getString("name");
                                                 String role = doc.getString("role");
                                                 Boolean isAvailable = doc.getBoolean("isAvailable");
-                                                String temp = "36.5℃";
 
                                                 welcomeTextView.setText(name + "님 환영합니다");
-                                                temperatureTextView.setText("나의 온도 : " + temp);
+
+                                                if ("멘토".equals(role)) {
+                                                    Long pointLong = doc.getLong("point");
+                                                    int point = pointLong != null ? pointLong.intValue() : 0;
+                                                    // 포인트/뱃지 UI 반영
+                                                    pointTextView.setVisibility(View.VISIBLE);
+                                                    pointTextView.setText("나의 포인트 " + point + "P");
+
+                                                } else {
+                                                    pointTextView.setVisibility(View.GONE);
+                                                }
 
                                                 if (role != null) {
                                                     findPersonButton.setText(role.equals("멘토") ? "멘티 찾기" : "멘토 찾기");
@@ -151,6 +167,8 @@ public class HomeActivity extends AppCompatActivity {
                     .addOnFailureListener(e -> Log.e("FCM", "❌ 토큰 가져오기 실패: " + e.getMessage()));
         }
     }
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,

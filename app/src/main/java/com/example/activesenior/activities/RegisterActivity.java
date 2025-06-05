@@ -109,6 +109,8 @@ public class RegisterActivity extends AppCompatActivity {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
         Calendar calendar = Calendar.getInstance();
         String registerDay = simpleDateFormat.format(calendar.getTime());
+        int point = 5000;
+
 
 
         // Firebase Auth 회원가입
@@ -130,7 +132,13 @@ public class RegisterActivity extends AppCompatActivity {
                             user.put("role", role);
                             user.put("password", password);
                             user.put("isAvailable", false);
-                            user.put("registerDate", registerDay);
+
+                            if ("멘토".equals(role)) {
+                                user.put("point", point); // 초기 포인트
+                                List<String> badges = new ArrayList<>();
+                                badges.add("\uD83C\uDF31 새싹멘토");
+                                user.put("badges", badges);
+                            }
 
 
                             db.collection("users").document(uid)

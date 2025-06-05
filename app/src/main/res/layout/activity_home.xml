@@ -75,14 +75,15 @@
                     android:layout_marginBottom="8dp" />
 
                 <TextView
-                    android:id="@+id/temperatureTextView"
+                    android:id="@+id/pointTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="나의 온도 : 36.5℃"
+                    android:text="나의 포인트 "
                     android:textSize="28sp"
                     android:textColor="#FFFFFF"
                     android:layout_marginBottom="8dp"
-                    android:gravity="center" />
+                    android:gravity="center"
+                    android:visibility="gone"/>
 
                 <TextView
                     android:id="@+id/welcomeTextView"
@@ -158,6 +159,8 @@
                 android:background="@drawable/rounded_button_green"
                 />
 
+
+
             <androidx.appcompat.widget.AppCompatButton
                 style="@style/ButtonStyle"
                 android:id="@+id/manualButton"
@@ -174,6 +177,8 @@
 
 
         </GridLayout>
+
+
 
 
     </LinearLayout>
