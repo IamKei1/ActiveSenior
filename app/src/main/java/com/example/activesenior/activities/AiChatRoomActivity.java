@@ -46,6 +46,8 @@ public class AiChatRoomActivity extends AppCompatActivity {
         chatRoomRecyclerView = findViewById(R.id.chatRoomRecyclerView);
         chatRoomRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        findViewById(R.id.backButton).setOnClickListener(v -> onBackPressed());
+
 
         findViewById(R.id.newChatButton).setOnClickListener(v -> {
             String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
