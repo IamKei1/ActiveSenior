@@ -7,6 +7,8 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.*;
 import androidx.annotation.Nullable;
@@ -34,7 +36,7 @@ public class AiMentorActivity extends AppCompatActivity {
     private static final int LOCATION_REQUEST_CODE = 101;
 
     private EditText inputEditText;
-    private Button sendTextButton, voiceButton;
+    private ImageButton sendTextButton, voiceButton;
     private RecyclerView chatRecyclerView;
     private ChatAdapter chatAdapter;
     private List<ChatMessage> chatMessages;
@@ -77,6 +79,27 @@ public class AiMentorActivity extends AppCompatActivity {
                 processMessage(input);
                 inputEditText.setText("");
             }
+        });
+
+        inputEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().trim().isEmpty()) {
+                    // 텍스트 없으면 전송 숨기고 음성 보이기
+                    sendTextButton.setVisibility(View.GONE);
+                    voiceButton.setVisibility(View.VISIBLE);
+                } else {
+                    // 텍스트 있으면 전송 보이고 음성 숨기기
+                    sendTextButton.setVisibility(View.VISIBLE);
+                    voiceButton.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
         });
 
         voiceButton.setOnClickListener(v -> {

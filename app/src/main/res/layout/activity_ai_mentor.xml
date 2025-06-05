@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!-- 기존 채팅 화면 -->
     <LinearLayout
@@ -29,19 +30,47 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:hint="메시지를 입력하세요" />
+                android:gravity="top|start"
+                android:maxLines="4"
+                android:scrollbars="vertical"
+                android:overScrollMode="always"
+                android:inputType="textMultiLine"
+                android:minHeight="48dp"
+                android:textSize="18sp"
+                android:hint="메시지를 입력하세요"
+                android:backgroundTint="#EEEEEE"
+                android:background="@drawable/rounded_button_blue"/>
 
-            <Button
+            <!-- 전송 버튼 (기본은 GONE) -->
+            <ImageButton
+                app:tint="#FFFFFF"
                 android:id="@+id/sendTextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="전송" />
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:backgroundTint="#4ABC36"
+                android:src="@drawable/icon_send_message"
+                android:scaleType="centerInside"
+                android:padding="10dp"
+                android:background="@drawable/rounded_button_blue"
+                android:contentDescription="텍스트 메시지"
+                android:visibility="gone"
+                />
 
-            <Button
+
+
+            <ImageButton
                 android:id="@+id/voiceButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="🎤" />
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:backgroundTint="#EEEEEE"
+                android:src="@drawable/icon_audio"
+                android:scaleType="centerInside"
+                android:padding="7dp"
+                android:background="@drawable/rounded_button_blue"
+                android:contentDescription="음성 메시지"
+                />
         </LinearLayout>
     </LinearLayout>
 

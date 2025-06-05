@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +26,8 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.*;
 import com.google.firebase.functions.FirebaseFunctions;
+import android.text.Editable;
+import android.text.TextWatcher;
 
 import java.util.*;
 
@@ -32,7 +35,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private RecyclerView chatRecyclerView;
     private EditText inputEditText;
-    private Button sendTextButton, voiceButton;
+    private ImageButton sendTextButton, voiceButton;
     private TextView watermarkText;
     private ChatAdapter chatAdapter;
     private List<ChatMessage> chatMessages = new ArrayList<>();
@@ -63,6 +66,8 @@ public class ChatActivity extends AppCompatActivity {
         chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         chatRecyclerView.setAdapter(chatAdapter);
 
+
+
         sendTextButton.setOnClickListener(v -> {
             String msg = inputEditText.getText().toString().trim();
             if (!msg.isEmpty()) {
@@ -77,6 +82,28 @@ public class ChatActivity extends AppCompatActivity {
                 }
             }
         });
+
+        inputEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().trim().isEmpty()) {
+                    // 텍스트 없으면 전송 숨기고 음성 보이기
+                    sendTextButton.setVisibility(View.GONE);
+                    voiceButton.setVisibility(View.VISIBLE);
+                } else {
+                    // 텍스트 있으면 전송 보이고 음성 숨기기
+                    sendTextButton.setVisibility(View.VISIBLE);
+                    voiceButton.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
 
         voiceButton.setOnClickListener(v -> {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
