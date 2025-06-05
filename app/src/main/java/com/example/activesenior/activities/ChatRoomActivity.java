@@ -51,6 +51,7 @@ public class ChatRoomActivity extends AppCompatActivity {
         chatRoomRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         newChatbutton = findViewById(R.id.newChatButton);
         newChatbutton.setVisibility(View.GONE);
+        findViewById(R.id.backButton).setOnClickListener(v -> onBackPressed());
 
         chatRoomAdapter = new ChatRoomAdapter(chatRoomList, currentUid, chatRoom -> {
             String participantUid = currentUid.equals(chatRoom.getParticipant1Id()) ? chatRoom.getParticipant2Id() : chatRoom.getParticipant1Id();

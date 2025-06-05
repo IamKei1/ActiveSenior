@@ -22,7 +22,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:layout_marginBottom="20dp"
+            >
 
             <EditText
                 android:id="@+id/inputEditText"
@@ -35,12 +37,15 @@
                 android:id="@+id/sendTextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:backgroundTint="#5A9EFF"
+                android:layout_marginRight="10dp"
                 android:text="전송" />
 
             <Button
                 android:id="@+id/voiceButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:backgroundTint="#2671DE"
                 android:text="🎤" />
         </LinearLayout>
     </LinearLayout>
