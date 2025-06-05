@@ -51,6 +51,8 @@ public class HomeActivity extends AppCompatActivity {
     private Switch userToggleSwitch;
     private Handler handler = new Handler();
     private Toast currentToast;
+    private long backPressedTime = 0;
+    private Toast backToast;
 
     private LinearLayout infoBoxLayout;
     private ValueAnimator gradientAnimator;
@@ -236,6 +238,18 @@ public class HomeActivity extends AppCompatActivity {
             if (vibrator != null && vibrator.hasVibrator()) {
                 vibrator.vibrate(200);
             }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (System.currentTimeMillis() - backPressedTime < 2000) {
+            if (backToast != null) backToast.cancel(); // 토스트 제거
+            super.onBackPressed(); // 앱 종료
+        } else {
+            backPressedTime = System.currentTimeMillis();
+            backToast = Toast.makeText(this, "한 번 더 누르면 종료됩니다", Toast.LENGTH_SHORT);
+            backToast.show();
         }
     }
 }

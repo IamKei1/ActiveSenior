@@ -28,14 +28,19 @@ public class CustomerServiceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer_service);
 
+        findViewById(R.id.btnGoPointShop).setOnClickListener(v ->
+                startActivity(new Intent(this, PointShopActivity.class)));
+
+        findViewById(R.id.btnGoSuggestion).setOnClickListener(v ->
+                startActivity(new Intent(this, SuggestionActivity.class)));
+
         findViewById(R.id.btnGoChangePassword).setOnClickListener(v ->
                 startActivity(new Intent(this, ChangePasswordActivity.class)));
 
         findViewById(R.id.btnGoDeleteAccount).setOnClickListener(v ->
                 startActivity(new Intent(this, DeleteAccountActivity.class)));
 
-        findViewById(R.id.btnGoSuggestion).setOnClickListener(v ->
-                startActivity(new Intent(this, SuggestionActivity.class)));
+
 
         findViewById(R.id.backButton).setOnClickListener(v -> onBackPressed());
 

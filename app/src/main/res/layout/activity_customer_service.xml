@@ -16,7 +16,15 @@
         android:layout_height="wrap_content"
         />
 
-
+    <Button
+        android:id="@+id/btnGoPointShop"
+        android:text="포인트 샵"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:backgroundTint="#2668B3"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp" />
     <Button
         android:id="@+id/btnGoSuggestion"
         android:text="건의사항 보내기"
