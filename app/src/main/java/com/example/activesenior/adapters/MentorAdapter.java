@@ -24,9 +24,11 @@ public class MentorAdapter extends RecyclerView.Adapter<MentorAdapter.MentorView
     private List<User> mentorList;
     private OnMentorClickListener listener;
 
+
     public MentorAdapter(List<User> mentorList, OnMentorClickListener listener) {
         this.mentorList = mentorList;
         this.listener = listener;
+
     }
 
     public void setMentorList(List<User> list) {
@@ -48,7 +50,7 @@ public class MentorAdapter extends RecyclerView.Adapter<MentorAdapter.MentorView
         holder.roleTextView.setText("역할: " + mentor.getRole());
 
         holder.requestButton.setOnClickListener(v -> {
-            String message = "[" + mentor.getName() + "] 멘토에게 요청하시겠습니까?";
+            String message = mentor.getRole() + " [" + mentor.getName() + "] " + "님에게 요청하시겠습니까?";
 
             DialogHelper.showConfirmDialog(
                     v.getContext(),

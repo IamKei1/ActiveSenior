@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:orientation="vertical"
@@ -33,76 +34,95 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/rounded_blue_box"
-                android:padding="36dp"
-                android:gravity="center"
+                android:orientation="horizontal"
+                android:gravity="end"
                 android:elevation="4dp"
-                android:clipToOutline="true" />
+                android:clipToOutline="true"
+                android:translationZ="10dp"
+                >
 
-            <Switch
-                android:id="@+id/userToggleSwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+
+
+            <ImageButton
+                android:id="@+id/helpButton"
+                android:layout_width="24dp"
+                android:layout_height="56dp"
                 android:layout_gravity="end|top"
-                android:layout_margin="12dp"
-                android:text="멘토 활동 OFF"
-                android:textColor="#FFFFFF"
-                android:textSize="22sp"
-                android:minHeight="50dp"
-                android:switchMinWidth="65dp"
-                android:switchPadding="12dp"
-                android:trackTint="#06280A"
-                android:translationZ="7dp" />
+                android:layout_margin="5dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/gethelp"
+                app:tint="#FFFFFF"
+                android:contentDescription="도움말"
+                android:scaleType="fitCenter"
+                android:translationZ="20dp"
+                />
+
+                <Switch
+                    android:id="@+id/userToggleSwitch"
+                    android:layout_width="280dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|top"
+                    android:layout_margin="10dp"
+                    android:minHeight="50dp"
+                    android:switchMinWidth="65dp"
+                    android:switchPadding="12dp"
+                    android:text="멘토가 나를 찾을 수 있어요"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:trackTint="#06280A"
+                    android:translationZ="10dp" />
+            </LinearLayout>
+
 
             <LinearLayout
                 android:id="@+id/infoBoxLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:background="#5A9EFF"
-                android:padding="36dp"
-                android:gravity="center"
+                android:clipToOutline="true"
                 android:elevation="4dp"
-                android:clipToOutline="true">
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="36dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=""
-                    android:textSize="28sp"
+                    android:layout_marginBottom="8dp"
                     android:gravity="center"
-                    android:layout_marginBottom="8dp" />
+                    android:text=""
+                    android:textSize="28sp" />
+
 
                 <TextView
                     android:id="@+id/pointTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="나의 포인트 "
-                    android:textSize="28sp"
-                    android:textColor="#FFFFFF"
                     android:layout_marginBottom="8dp"
                     android:gravity="center"
-                    android:visibility="gone"/>
+                    android:text="나의 포인트 "
+                    android:textColor="#FFFFFF"
+                    android:textSize="28sp"
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/welcomeTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="홍길동님 환영합니다"
-                    android:textSize="28sp"
-                    android:textColor="#FFFFFF"
                     android:layout_marginBottom="8dp"
-                    android:gravity="center" />
+                    android:gravity="center"
+                    android:text="홍길동님 환영합니다"
+                    android:textColor="#FFFFFF"
+                    android:textSize="28sp" />
 
                 <TextView
                     android:id="@+id/statusTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:text="현재 멘토/멘티 활동\n [대기중]"
-                    android:textSize="24sp"
                     android:textColor="#FFFFFF"
-                    android:gravity="center" />
+                    android:textSize="24sp" />
             </LinearLayout>
         </FrameLayout>
 
@@ -153,8 +173,8 @@
 
             <androidx.appcompat.widget.AppCompatButton
                 style="@style/ButtonStyle"
-                android:id="@+id/approveHelpButton"
-                android:text="도움 받았어요 ✔️"
+                android:id="@+id/approveButton"
+                android:text="현재 멘토활동 종료하기"
                 android:textSize="20sp"
                 android:background="@drawable/rounded_button_green"
                 />

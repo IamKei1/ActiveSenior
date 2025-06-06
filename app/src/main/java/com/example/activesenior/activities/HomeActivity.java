@@ -15,6 +15,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -48,9 +49,10 @@ public class HomeActivity extends AppCompatActivity {
     private FirebaseFirestore db;
 
     private TextView welcomeTextView, pointTextView, statusTextView;
-    private Button findPersonButton;
+    private Button findPersonButton, openChatButton, approveButton;
     private Button aiMentorButton, manualButton, customerServiceButton;
-    private Button openChatButton;
+    private ImageButton helpButton;
+
 
     private Switch userToggleSwitch;
     private Handler handler = new Handler();
@@ -60,6 +62,8 @@ public class HomeActivity extends AppCompatActivity {
 
     private LinearLayout infoBoxLayout;
     private ValueAnimator gradientAnimator;
+
+    private String role;
 
     @RequiresApi(api = Build.VERSION_CODES.P)
     @Override
@@ -102,8 +106,16 @@ public class HomeActivity extends AppCompatActivity {
         openChatButton = findViewById(R.id.openChatButton);
         manualButton = findViewById(R.id.manualButton);
         customerServiceButton = findViewById(R.id.customerServiceButton);
+        approveButton = findViewById(R.id.approveButton);
+        helpButton = findViewById(R.id.helpButton);
 
+        approveButton.setOnClickListener(v -> {
+            NavigationHelper.showConfirmEndActivity(this, role); // "멘토" 또는 "멘티"
+        });
 
+        helpButton.setOnClickListener(v -> {
+            NavigationHelper.showUserToggleHelp(this, role);
+        });
 
 
         userToggleSwitch = findViewById(R.id.userToggleSwitch);
@@ -136,7 +148,7 @@ public class HomeActivity extends AppCompatActivity {
                                                 if (!doc.exists()) return;
 
                                                 String name = doc.getString("name");
-                                                String role = doc.getString("role");
+                                                role = doc.getString("role");
                                                 Boolean isAvailable = doc.getBoolean("isAvailable");
 
                                                 welcomeTextView.setText(name + "님 환영합니다");
@@ -147,9 +159,11 @@ public class HomeActivity extends AppCompatActivity {
                                                     // 포인트/뱃지 UI 반영
                                                     pointTextView.setVisibility(View.VISIBLE);
                                                     pointTextView.setText("나의 포인트 " + point + "P");
+                                                    openChatButton.setText("멘티와 대화하기");
 
                                                 } else {
                                                     pointTextView.setVisibility(View.GONE);
+                                                    approveButton.setText("멘토의 도움 받았어요 ✔\uFE0F");
                                                 }
 
                                                 if (role != null) {
@@ -185,27 +199,30 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void initializeUserToggle(String role, Boolean isAvailable, String uid) {
-        String label = role.equals("멘토") ? "멘토" : "멘티";
+        String target = role.equals("멘토") ? "멘티" : "멘토"; // 내가 공개하는 대상
         boolean active = Boolean.TRUE.equals(isAvailable);
-        userToggleSwitch.setChecked(active);
-        userToggleSwitch.setText(label + " 활동 " + (active ? "ON" : "OFF"));
-        statusTextView.setText("현재 " + label + " 활동\n [" + (active ? "진행중" : "대기중") + "]");
 
+        // ✅ 1. 초기 UI 적용 (리스너 등록 전에 먼저)
+        userToggleSwitch.setChecked(active);
+        userToggleSwitch.setText(target + (active ? "가 나를 찾을 수 있어요" : "가 나를 찾을 수 없어요"));
+        statusTextView.setText("현재 상태: " + (active ? "활동 중" : "비공개 상태"));
         if (active) startGradientAnimation();
         else stopGradientAnimation();
 
+        // ✅ 2. 리스너 등록
         userToggleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             db.collection("users").document(uid)
                     .update("isAvailable", isChecked)
                     .addOnSuccessListener(unused -> {
-                        userToggleSwitch.setText(label + " 활동 " + (isChecked ? "ON" : "OFF"));
-                        statusTextView.setText("현재 " + label + " 활동\n [" + (isChecked ? "진행중" : "대기중") + "]");
-
+                        // UI 업데이트
+                        userToggleSwitch.setText(target + (isChecked ? "가 나를 찾을 수 있어요" : "가 나를 찾을 수 없어요"));
+                        statusTextView.setText("현재 상태: " + (isChecked ? "활동 중" : "비공개 상태"));
                         if (isChecked) startGradientAnimation();
                         else stopGradientAnimation();
 
+                        // 알림 메시지
                         if (currentToast != null) currentToast.cancel();
-                        String message = isChecked ? label + " 활동을 시작합니다" : label + " 활동을 종료합니다";
+                        String message = isChecked ? "검색이 가능해졌습니다" : "검색이 중단되었습니다";
                         currentToast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
                         currentToast.show();
 
@@ -216,6 +233,16 @@ public class HomeActivity extends AppCompatActivity {
                         }, 3000);
                     });
         });
+    }
+
+
+    // ✅ 단순히 텍스트/애니메이션만 묶어둔 헬퍼 메서드 (선택사항)
+    private void applyToggleState(String label, boolean isActive) {
+        userToggleSwitch.setText(label + " 활동 " + (isActive ? "ON" : "OFF"));
+        statusTextView.setText("현재 " + label + " 활동\n [" + (isActive ? "진행중" : "대기중") + "]");
+
+        if (isActive) startGradientAnimation();
+        else stopGradientAnimation();
     }
 
     private void startGradientAnimation() {
