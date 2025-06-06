@@ -19,7 +19,7 @@
 
             <!-- 타이틀 -->
             <TextView
-                android:layout_marginTop="100dp"
+                android:layout_marginTop="90dp"
                 android:text="사용자 메뉴얼"
                 android:textSize="36sp"
                 android:textStyle="bold"
@@ -45,14 +45,15 @@
 
 
                 <TextView
-
+                    android:id="@+id/pointTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:gravity="center"
-                    android:text="나의 온도 : 36.5℃"
+                    android:text="나의 포인트 5000P"
                     android:textColor="#FFFFFF"
-                    android:textSize="28sp" />
+                    android:textSize="28sp"
+                    android:visibility="gone" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -67,7 +68,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="현재 멘토/멘티 활동\n [대기중]"
+                    android:text="현재 상태 : 대기중 / 활동중"
                     android:textColor="#FFFFFF"
                     android:textSize="24sp" />
             </LinearLayout>
@@ -87,27 +88,27 @@
                 <androidx.appcompat.widget.AppCompatButton
                     style="@style/ButtonStyle"
                     android:id="@+id/findMentorButton_manual"
-                    android:text="멘토 찾기"
+                    android:text="🔍 멘토/멘티 찾기"
                     android:background="@drawable/rounded_button_blue"
                     android:textSize="20sp"/>
 
                 <androidx.appcompat.widget.AppCompatButton
                     style="@style/ButtonStyle"
                     android:id="@+id/aiMentorButton_manual"
-                    android:text="AI멘토에게 물어보기"
+                    android:text=" 🤖 AI멘토에게 물어보기"
                     android:background="@drawable/rounded_button_blue"
                     android:textSize="20sp"/>
                 <androidx.appcompat.widget.AppCompatButton
                     style="@style/ButtonStyle"
                     android:id="@+id/openChatButton_manual"
-                    android:text="멘토와 대화하기"
+                    android:text="💬 멘토/멘티와 대화하기 "
                     android:background="@drawable/rounded_button_green"
                     android:textSize="20sp"/>
 
                 <androidx.appcompat.widget.AppCompatButton
                     style="@style/ButtonStyle"
                     android:id="@+id/approveHelpButton_manual"
-                    android:text="도움 받았어요 ✔️"
+                    android:text="✔ 멘토의 도움을 받았어요 ️"
                     android:textSize="20sp"
                     android:background="@drawable/rounded_button_green"
                     />
@@ -115,14 +116,14 @@
                 <androidx.appcompat.widget.AppCompatButton
                     style="@style/ButtonStyle"
                     android:id="@+id/manualButton_manual"
-                    android:text="사용자 매뉴얼"
+                    android:text="📖사용자\n매뉴얼"
                     android:background="@drawable/rounded_button_yellow"
                     android:textSize="20sp"/>
 
                 <androidx.appcompat.widget.AppCompatButton
                     style="@style/ButtonStyle"
                     android:id="@+id/customerServiceButton_manual"
-                    android:text="고객서비스"
+                    android:text="🎧 고객\n서비스"
                     android:background="@drawable/rounded_button_yellow"
                     android:textSize="20sp"/>
 
@@ -144,7 +145,7 @@
     <!-- 중앙 말풍선 안내 -->
     <LinearLayout
         android:id="@+id/bubbleLayout"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="12dp"
@@ -153,6 +154,24 @@
         android:visibility="visible"
         android:elevation="8dp">
 
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:paddingEnd="10dp"
+            >
+
+            <ImageButton
+                android:id="@+id/closeBubbleButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:background="@android:color/transparent"
+                android:contentDescription="말풍선 닫기 버튼" />
+        </LinearLayout>
+
         <TextView
             android:id="@+id/bubbleTextView"
             android:layout_weight="1"
@@ -160,16 +179,9 @@
             android:layout_height="wrap_content"
             android:text="사용자 메뉴얼 입니다.\n각 버튼을 클릭하면 각 버튼의 기능을 설명합니다."
             android:textColor="#000000"
-            android:textSize="32sp"
+            android:textSize="28sp"
             android:layout_marginEnd="10dp" />
 
-        <ImageButton
-            android:id="@+id/closeBubbleButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_close_clear_cancel"
-            android:background="@android:color/transparent"
-            android:contentDescription="말풍선 닫기 버튼" />
     </LinearLayout>
 
 </FrameLayout>

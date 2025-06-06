@@ -87,10 +87,7 @@ public class NavigationHelper {
 
                                     batch.commit().addOnSuccessListener(unused -> {
                                         ConfirmDialog.show(activity, "활동이 종료되었습니다.\n수고하셨습니다!", () -> {
-                                            Intent intent = new Intent(activity, HomeActivity.class);
-                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                            activity.startActivity(intent);
-                                            activity.finish();
+
                                         });
                                     }).addOnFailureListener(e -> {
                                         Toast.makeText(activity, "활동 종료 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show();

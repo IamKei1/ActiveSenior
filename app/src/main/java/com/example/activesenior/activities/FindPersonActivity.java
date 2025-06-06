@@ -5,10 +5,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.media.Image;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,14 +59,27 @@ public class FindPersonActivity extends AppCompatActivity implements OnMapReadyC
     private TextView titleView;
     private Spinner radiusSpinner;
 
+    private ImageButton reload;
+
+    private final Handler refreshHandler = new Handler(Looper.getMainLooper());
+    private final int REFRESH_INTERVAL_MS = 15_000; // 15초
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_person);
 
+
         titleView = findViewById(R.id.findPersonTitle);
         radiusSpinner = findViewById(R.id.radiusSpinner);
         personRecyclerView = findViewById(R.id.personRecyclerView);
+
+        reload = findViewById(R.id.reloadButton);
+
+        reload.setOnClickListener(v -> {
+            loadUsersAndMarkOnMap();
+            Toast.makeText(this, "검색가능한 사용자 목록을 갱신합니다.", Toast.LENGTH_SHORT).show();
+        });
 
         db = FirebaseFirestore.getInstance();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -151,6 +167,8 @@ public class FindPersonActivity extends AppCompatActivity implements OnMapReadyC
         super.onResume();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+            refreshHandler.postDelayed(autoRefreshRunnable, REFRESH_INTERVAL_MS); // 🔁 시작
+            Toast.makeText(this, "검색가능한 사용자 목록을 갱신합니다.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -158,6 +176,7 @@ public class FindPersonActivity extends AppCompatActivity implements OnMapReadyC
     protected void onPause() {
         super.onPause();
         fusedLocationClient.removeLocationUpdates(locationCallback);
+        refreshHandler.removeCallbacks(autoRefreshRunnable); // 🛑 중지
     }
 
     private void calculateDistancesToUsers() {
@@ -254,6 +273,14 @@ public class FindPersonActivity extends AppCompatActivity implements OnMapReadyC
 
                     calculateDistancesToUsers();
 
+                    // ✅ 사용자 없으면 안내 메시지 표시
+                    TextView emptyMessage = findViewById(R.id.emptyMessageTextView);
+                    if (userList.isEmpty()) {
+                        emptyMessage.setVisibility(View.VISIBLE);
+                    } else {
+                        emptyMessage.setVisibility(View.GONE);
+                    }
+
                     googleMap.setOnMarkerClickListener(marker -> {
                         String name = marker.getTitle();
                         for (User user : userList) {
@@ -290,18 +317,34 @@ public class FindPersonActivity extends AppCompatActivity implements OnMapReadyC
                             .get()
                             .addOnSuccessListener(querySnapshot -> {
                                 if (!querySnapshot.isEmpty()) {
+                                    // ✅ 기존 채팅방이 있는 경우: matchedUserId / isAvailable 갱신
                                     DocumentSnapshot existingRoom = querySnapshot.getDocuments().get(0);
-                                    Intent intent = new Intent(this, ChatActivity.class);
-                                    intent.putExtra("roomId", existingRoom.getId());
-                                    intent.putExtra("participantUid", user.getUid());
-                                    intent.putExtra("participantName", user.getName());
-                                    startActivity(intent);
+
+                                    WriteBatch batch = db.batch();
+                                    DocumentReference myRef = db.collection("users").document(currentUserUid);
+                                    DocumentReference userRef = db.collection("users").document(user.getUid());
+
+                                    batch.update(myRef, "matchedUserId", user.getUid(), "isAvailable", false);
+                                    batch.update(userRef, "matchedUserId", currentUserUid, "isAvailable", false);
+
+                                    batch.commit().addOnSuccessListener(unused -> {
+                                        Intent intent = new Intent(this, ChatActivity.class);
+                                        intent.putExtra("roomId", existingRoom.getId());
+                                        intent.putExtra("participantUid", user.getUid());
+                                        intent.putExtra("participantName", user.getName());
+                                        startActivity(intent);
+                                    }).addOnFailureListener(e -> {
+                                        Toast.makeText(this, "사용자 상태 업데이트 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    });
+
                                 } else {
+                                    // 새 채팅방 생성 및 상태 업데이트는 기존대로 처리
                                     createNewChatRoom(currentUserUid, currentUserName, user);
                                 }
                             });
                 });
     }
+
 
     private void createNewChatRoom(String myUid, String myName, User user) {
         List<String> participants = Arrays.asList(myUid, user.getUid());
@@ -316,15 +359,29 @@ public class FindPersonActivity extends AppCompatActivity implements OnMapReadyC
         chatRoom.put("lastMessage", "채팅이 시작되었습니다");
         chatRoom.put("lastTimestamp", new Date());
 
-        db.collection("users").document(myUid).update("matchedUserId", user.getUid());
-        db.collection("users").document(user.getUid()).update("matchedUserId", myUid, "isAvailable", false);
+        WriteBatch batch = db.batch();
 
+        DocumentReference myRef = db.collection("users").document(myUid);
+        DocumentReference userRef = db.collection("users").document(user.getUid());
+
+// 🔄 양쪽 사용자 모두 matchedUserId와 isAvailable 업데이트
+        batch.update(myRef, "matchedUserId", user.getUid(), "isAvailable", false);
+        batch.update(userRef, "matchedUserId", myUid, "isAvailable", false);
+
+// 🔄 채팅방 생성
         db.collection("chat_rooms").add(chatRoom).addOnSuccessListener(docRef -> {
-            Intent intent = new Intent(this, ChatActivity.class);
-            intent.putExtra("roomId", docRef.getId());
-            intent.putExtra("participantUid", user.getUid());
-            intent.putExtra("participantName", user.getName());
-            startActivity(intent);
+            // 채팅방 생성 성공 후 사용자 정보 업데이트 실행
+            batch.commit().addOnSuccessListener(unused -> {
+                Intent intent = new Intent(this, ChatActivity.class);
+                intent.putExtra("roomId", docRef.getId());
+                intent.putExtra("participantUid", user.getUid());
+                intent.putExtra("participantName", user.getName());
+                startActivity(intent);
+            }).addOnFailureListener(e -> {
+                Toast.makeText(this, "사용자 상태 업데이트 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            });
+        }).addOnFailureListener(e -> {
+            Toast.makeText(this, "채팅방 생성 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -343,4 +400,12 @@ public class FindPersonActivity extends AppCompatActivity implements OnMapReadyC
             fetchAndUploadLocation();
         }
     }
+
+    private final Runnable autoRefreshRunnable = new Runnable() {
+        @Override
+        public void run() {
+            loadUsersAndMarkOnMap(); // 🔄 사용자 목록 새로고침
+            refreshHandler.postDelayed(this, REFRESH_INTERVAL_MS); // 다음 실행 예약
+        }
+    };
 }

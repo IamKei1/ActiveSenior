@@ -159,15 +159,15 @@ public class HomeActivity extends AppCompatActivity {
                                                     // 포인트/뱃지 UI 반영
                                                     pointTextView.setVisibility(View.VISIBLE);
                                                     pointTextView.setText("나의 포인트 " + point + "P");
-                                                    openChatButton.setText("멘티와 대화하기");
+                                                    openChatButton.setText("\uD83D\uDCAC 멘티와 대화하기");
 
                                                 } else {
                                                     pointTextView.setVisibility(View.GONE);
-                                                    approveButton.setText("멘토의 도움 받았어요 ✔\uFE0F");
+                                                    approveButton.setText("✔️ 멘토의 도움 받았어요");
                                                 }
 
                                                 if (role != null) {
-                                                    findPersonButton.setText(role.equals("멘토") ? "멘티 찾기" : "멘토 찾기");
+                                                    findPersonButton.setText(role.equals("멘토") ? "\uD83D\uDD0D 멘티 찾기" : "\uD83D\uDD0D 멘토 찾기");
                                                     initializeUserToggle(role, isAvailable, uid);
                                                 }
                                             })
@@ -205,7 +205,7 @@ public class HomeActivity extends AppCompatActivity {
         // ✅ 1. 초기 UI 적용 (리스너 등록 전에 먼저)
         userToggleSwitch.setChecked(active);
         userToggleSwitch.setText(target + (active ? "가 나를 찾을 수 있어요" : "가 나를 찾을 수 없어요"));
-        statusTextView.setText("현재 상태: " + (active ? "활동 중" : "비공개 상태"));
+        statusTextView.setText("현재 상태: " + (active ? "활동 중" : "대기중"));
         if (active) startGradientAnimation();
         else stopGradientAnimation();
 
@@ -216,7 +216,7 @@ public class HomeActivity extends AppCompatActivity {
                     .addOnSuccessListener(unused -> {
                         // UI 업데이트
                         userToggleSwitch.setText(target + (isChecked ? "가 나를 찾을 수 있어요" : "가 나를 찾을 수 없어요"));
-                        statusTextView.setText("현재 상태: " + (isChecked ? "활동 중" : "비공개 상태"));
+                        statusTextView.setText("현재 상태: " + (isChecked ? "활동 중" : "대기중"));
                         if (isChecked) startGradientAnimation();
                         else stopGradientAnimation();
 
@@ -236,14 +236,6 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
-    // ✅ 단순히 텍스트/애니메이션만 묶어둔 헬퍼 메서드 (선택사항)
-    private void applyToggleState(String label, boolean isActive) {
-        userToggleSwitch.setText(label + " 활동 " + (isActive ? "ON" : "OFF"));
-        statusTextView.setText("현재 " + label + " 활동\n [" + (isActive ? "진행중" : "대기중") + "]");
-
-        if (isActive) startGradientAnimation();
-        else stopGradientAnimation();
-    }
 
     private void startGradientAnimation() {
         GradientDrawable drawable = (GradientDrawable) ContextCompat.getDrawable(this, R.drawable.rounded_gradient_box).mutate();

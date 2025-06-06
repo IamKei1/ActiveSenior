@@ -154,27 +154,27 @@
             <androidx.appcompat.widget.AppCompatButton
                 style="@style/ButtonStyle"
                 android:id="@+id/findPersonButton"
-                android:text="멘토 찾기"
+                android:text="🔍 멘토 찾기"
                 android:background="@drawable/rounded_button_blue"
                 android:textSize="20sp"/>
 
             <androidx.appcompat.widget.AppCompatButton
                 style="@style/ButtonStyle"
                 android:id="@+id/aiMentorButton"
-                android:text="AI멘토에게 물어보기"
+                android:text="🤖 AI멘토에게 물어보기"
                 android:background="@drawable/rounded_button_blue"
                 android:textSize="20sp"/>
             <androidx.appcompat.widget.AppCompatButton
                 style="@style/ButtonStyle"
                 android:id="@+id/openChatButton"
-                android:text="멘토와 대화하기"
+                android:text="💬 멘토와\n대화하기 "
                 android:background="@drawable/rounded_button_green"
                 android:textSize="20sp"/>
 
             <androidx.appcompat.widget.AppCompatButton
                 style="@style/ButtonStyle"
                 android:id="@+id/approveButton"
-                android:text="현재 멘토활동 종료하기"
+                android:text="✔️ 현재 멘토 활동 종료하기"
                 android:textSize="20sp"
                 android:background="@drawable/rounded_button_green"
                 />
@@ -184,14 +184,14 @@
             <androidx.appcompat.widget.AppCompatButton
                 style="@style/ButtonStyle"
                 android:id="@+id/manualButton"
-                android:text="사용자 매뉴얼"
+                android:text="📖 사용자\n매뉴얼"
                 android:background="@drawable/rounded_button_yellow"
                 android:textSize="20sp"/>
 
             <androidx.appcompat.widget.AppCompatButton
                 style="@style/ButtonStyle"
                 android:id="@+id/customerServiceButton"
-                android:text="고객서비스"
+                android:text="🎧 고객\n서비스"
                 android:background="@drawable/rounded_button_yellow"
                 android:textSize="20sp"/>
 
