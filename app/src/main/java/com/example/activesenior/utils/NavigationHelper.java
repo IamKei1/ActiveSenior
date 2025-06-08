@@ -39,6 +39,7 @@ public class NavigationHelper {
     }
 
     // ✅ 활동 종료 확인 다이얼로그
+    // ✅ 활동 종료 확인 다이얼로그
     public static void showConfirmEndActivity(Activity activity, String role) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -46,7 +47,7 @@ public class NavigationHelper {
         if (currentUser == null) return;
         String currentUid = currentUser.getUid();
 
-        // 🔄 먼저 현재 유저 문서를 가져옴
+        // 🔄 현재 유저 문서 가져오기
         db.collection("users").document(currentUid).get()
                 .addOnSuccessListener(currentUserDoc -> {
                     String matchedUserId = currentUserDoc.getString("matchedUserId");
@@ -56,7 +57,6 @@ public class NavigationHelper {
                         return;
                     }
 
-                    // 🔄 매칭된 사용자 문서도 가져와서 이름과 역할을 확인
                     db.collection("users").document(matchedUserId).get()
                             .addOnSuccessListener(matchedDoc -> {
                                 String partnerName = matchedDoc.getString("name");
@@ -70,7 +70,6 @@ public class NavigationHelper {
                                 String label = partnerRole.equals("멘토") ? "멘토" : "멘티";
                                 String message = label + " " + partnerName + "님과의 활동을 종료하시겠습니까?";
 
-                                // ✅ 사용자 맞춤 메시지 다이얼로그
                                 ConfirmDialog.show(activity, message, () -> {
                                     DocumentReference currentRef = db.collection("users").document(currentUid);
                                     DocumentReference matchedRef = db.collection("users").document(matchedUserId);
@@ -79,23 +78,32 @@ public class NavigationHelper {
                                     batch.update(currentRef, "matchedUserId", null);
                                     batch.update(matchedRef, "matchedUserId", null);
 
-                                    if ("멘토".equals(role)) {
-                                        Long point = currentUserDoc.getLong("point");
+                                    // 🔄 멘토의 UID 결정
+                                    String mentorUid = "멘토".equals(role) ? currentUid : matchedUserId;
+                                    DocumentReference mentorRef = db.collection("users").document(mentorUid);
+
+                                    // 🔄 멘토 포인트 증가
+                                    mentorRef.get().addOnSuccessListener(mentorDoc -> {
+                                        Long point = mentorDoc.getLong("point");
                                         long updated = (point != null ? point : 0) + 1000;
-                                        batch.update(currentRef, "point", updated);
-                                    }
+                                        batch.update(mentorRef, "point", updated);
 
-                                    batch.commit().addOnSuccessListener(unused -> {
-                                        ConfirmDialog.show(activity, "활동이 종료되었습니다.\n수고하셨습니다!", () -> {
-
+                                        batch.commit().addOnSuccessListener(unused -> {
+                                            ConfirmDialog.show(activity, "활동이 종료되었습니다.\n수고하셨습니다!", () -> {
+                                                Intent intent = new Intent(activity, HomeActivity.class);
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                activity.startActivity(intent);
+                                                activity.finish();
+                                            });
+                                        }).addOnFailureListener(e -> {
+                                            Toast.makeText(activity, "활동 종료 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                         });
-                                    }).addOnFailureListener(e -> {
-                                        Toast.makeText(activity, "활동 종료 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                     });
                                 });
                             });
                 });
     }
+
 
     public static void showUserToggleHelp(Activity activity, String role) {
         String target = "멘토".equals(role) ? "멘티" : "멘토";

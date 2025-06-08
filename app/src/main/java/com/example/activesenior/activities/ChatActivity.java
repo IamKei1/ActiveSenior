@@ -44,6 +44,7 @@ public class ChatActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private String currentUserId, roomId;
     private String participant1Id, participant2Id, receiverUid;
+    private TextView partnerName;
 
     private static final int VOICE_REQUEST_CODE = 1001;
 
@@ -65,6 +66,8 @@ public class ChatActivity extends AppCompatActivity {
         chatAdapter = new ChatAdapter(chatMessages, currentUserId);
         chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         chatRecyclerView.setAdapter(chatAdapter);
+
+
 
 
 
@@ -128,7 +131,24 @@ public class ChatActivity extends AppCompatActivity {
                         receiverUid = participant2Id;
                     } else {
                         receiverUid = participant1Id;
+
                     }
+
+                    partnerName = findViewById(R.id.partnerName);
+                    db.collection("users").document(receiverUid).get()
+                            .addOnSuccessListener(userDoc -> {
+                                String name = userDoc.getString("name");
+                                String role = userDoc.getString("role");
+                                if (name != null && role != null) {
+                                    partnerName.setText(role + " " + name); // 예: 멘토 홍길동
+                                } else {
+                                    partnerName.setText("알 수 없는 사용자");
+                                }
+                            })
+                            .addOnFailureListener(e -> {
+                                partnerName.setText("정보 불러오기 실패");
+                                Log.e("CHAT_INIT", "상대방 정보 불러오기 실패: " + e.getMessage());
+                            });
 
                     listenForMessages();
                 })

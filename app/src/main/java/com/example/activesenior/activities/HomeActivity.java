@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +29,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.activesenior.R;
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -63,6 +65,10 @@ public class HomeActivity extends AppCompatActivity {
     private LinearLayout infoBoxLayout;
     private ValueAnimator gradientAnimator;
 
+    private ShimmerFrameLayout homeShimmerLayout;
+    private ScrollView homeScrollView;
+
+
     private String role;
 
     @RequiresApi(api = Build.VERSION_CODES.P)
@@ -70,6 +76,7 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
 
         try {
             Signature[] sigs = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_SIGNING_CERTIFICATES).signingInfo.getApkContentsSigners();
@@ -109,6 +116,9 @@ public class HomeActivity extends AppCompatActivity {
         approveButton = findViewById(R.id.approveButton);
         helpButton = findViewById(R.id.helpButton);
 
+        homeShimmerLayout = findViewById(R.id.homeShimmerLayout);
+        homeScrollView = findViewById(R.id.homeScrollView);
+
         approveButton.setOnClickListener(v -> {
             NavigationHelper.showConfirmEndActivity(this, role); // "멘토" 또는 "멘티"
         });
@@ -129,7 +139,9 @@ public class HomeActivity extends AppCompatActivity {
         NavigationHelper.setupConfirmNavigation(this, aiMentorButton, AiChatRoomActivity.class);
         NavigationHelper.setupConfirmNavigation(this, customerServiceButton, CustomerServiceActivity.class);
 
-
+        homeShimmerLayout.startShimmer();
+        homeShimmerLayout.setVisibility(View.VISIBLE);
+        homeScrollView.setVisibility(View.GONE);
 
 
 
@@ -156,20 +168,36 @@ public class HomeActivity extends AppCompatActivity {
                                                 if ("멘토".equals(role)) {
                                                     Long pointLong = doc.getLong("point");
                                                     int point = pointLong != null ? pointLong.intValue() : 0;
-                                                    // 포인트/뱃지 UI 반영
+
+                                                    // 🔹 badges 배열에서 첫 번째 값 가져오기
+                                                    List<String> badges = (List<String>) doc.get("badges");
+                                                    String badgeText = "";
+                                                    if (badges != null && !badges.isEmpty()) {
+                                                        badgeText = badges.get(0) + " "; // 🌱 새싹멘토
+                                                    }
+
+                                                    // UI 반영
                                                     pointTextView.setVisibility(View.VISIBLE);
                                                     pointTextView.setText("나의 포인트 " + point + "P");
-                                                    openChatButton.setText("\uD83D\uDCAC 멘티와 대화하기");
+                                                    openChatButton.setText("💬 멘티와 대화하기");
 
+                                                    // ✅ 뱃지를 이름 앞에 붙이기
+                                                    welcomeTextView.setText(badgeText + name + "님\n환영합니다");
                                                 } else {
                                                     pointTextView.setVisibility(View.GONE);
                                                     approveButton.setText("✔️ 멘토의 도움 받았어요");
+
+                                                    // 멘토가 아닐 경우, 뱃지 없이 기본 이름만 출력
+                                                    welcomeTextView.setText(name + "님 환영합니다");
                                                 }
 
                                                 if (role != null) {
                                                     findPersonButton.setText(role.equals("멘토") ? "\uD83D\uDD0D 멘티 찾기" : "\uD83D\uDD0D 멘토 찾기");
                                                     initializeUserToggle(role, isAvailable, uid);
                                                 }
+                                                homeShimmerLayout.stopShimmer();
+                                                homeShimmerLayout.setVisibility(View.GONE);
+                                                homeScrollView.setVisibility(View.VISIBLE);
                                             })
                                             .addOnFailureListener(e -> {
                                                 welcomeTextView.setText("정보 로딩 실패: " + e.getMessage());

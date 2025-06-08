@@ -10,6 +10,14 @@
         <item name="android:textColor">#FFFFFF</item>
         <item name="android:layout_margin">8dp</item>
     </style>
+    <style name="ShimmerButtonPlaceholder">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">60dp</item>
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:layout_margin">8dp</item>
+        <item name="android:background">@drawable/rounded_button_placeholder</item>
+    </style>
 
 
 
